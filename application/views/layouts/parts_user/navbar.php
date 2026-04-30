@@ -2,12 +2,9 @@
     <div class="container">
         <div class="nav-inner">
             <a href="<?php echo base_url('home'); ?>" class="nav-brand" style="text-decoration: none; cursor: pointer;">
-                <div class="nav-logo-icon">
-                    <i data-lucide="shield-plus"></i>
-                </div>
+
                 <div class="flex flex-col">
-                    <span class="text-xl font-extrabold text-primary" style="line-height: 1;">GAINS 2026</span>
-                    <span class="text-xs font-bold text-secondary" style="font-size: 0.65rem; letter-spacing: 0.05em;">POLTEKKES JAKARTA III</span>
+                    <img src="<?php echo base_url(); ?>public/settings/logo/logo.png" alt="GAINS Logo" style="width: 130px; height: 80px;">
                 </div>
             </a>
             <div class="nav-toggle" onclick="toggleMenu()">
@@ -28,7 +25,6 @@
                     </a>
                     <div class="dropdown-menu">
                         <a href="<?php echo base_url('competitions/irpc'); ?>" class="nav-sub-link" data-target="comp-irpc" data-page="irpc">International Pitch (IRPC)</a>
-                        <a href="<?php echo base_url('competitions/bppa'); ?>" class="nav-sub-link" data-target="comp-bppa" data-page="bppa">Best Published Paper (BPPA)</a>
                         <a href="<?php echo base_url('competitions/ahic'); ?>" class="nav-sub-link" data-target="comp-ahic" data-page="ahic">Innovation Challenge (AHIC)</a>
                         <a href="<?php echo base_url('competitions/e2ipbc'); ?>" class="nav-sub-link" data-target="comp-e2ipbc" data-page="e2ipbc">Policy Brief (E2I-PBC)</a>
                     </div>

@@ -62,18 +62,6 @@
               </div>
           </div>
 
-          <!-- SidebarSearch Form -->
-          <div class="form-inline">
-              <div class="input-group" data-widget="sidebar-search">
-                  <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                  <div class="input-group-append">
-                      <button class="btn btn-sidebar">
-                          <i class="fas fa-search fa-fw"></i>
-                      </button>
-                  </div>
-              </div>
-          </div>
-
           <!-- Sidebar Menu -->
           <nav class="mt-2">
               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -89,63 +77,21 @@
                               </p>
                           </a>
                       </li>
-                      <li class="nav-header">News</li>
+                      <li class="nav-header">Master Data</li>
                       <li class="nav-item">
-                          <a href="<?php echo base_url('admin/news'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'news' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-newspaper"></i>
+                          <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payments' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-credit-card"></i>
                               <p>
-                                  Master News
+                                  Payment
                               </p>
                           </a>
                       </li>
+
                       <li class="nav-item">
-                          <a href="<?php echo base_url('admin/category'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'category' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-list-alt"></i>
+                          <a href="<?php echo base_url('admin/submissions'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'submissions' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
                               <p>
-                                  Master Category
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-header">Menu</li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/pages'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'pages' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-file"></i>
-                              <p>
-                                  Master Pages
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-header">Media</li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/sliders'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'sliders' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Master Sliders
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-header">File Download</li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/files/download'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'files' && $this->uri->segment(3) == 'download' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-download"></i>
-                              <p>
-                                  Master Files
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/files/category'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'files' && $this->uri->segment(3) == 'category' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-list"></i>
-                              <p>
-                                  Master Category
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/files/type'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'files' && $this->uri->segment(3) == 'type' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-list"></i>
-                              <p>
-                                  Master Type
+                                  Submissions
                               </p>
                           </a>
                       </li>
@@ -156,14 +102,6 @@
                               <i class="nav-icon fas fa-user"></i>
                               <p>
                                   Master Users
-                              </p>
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="<?php echo base_url('admin/registrant'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'registrant' ? 'active' : ''; ?>">
-                              <i class="nav-icon fas fa-user"></i>
-                              <p>
-                                  Master Registrant
                               </p>
                           </a>
                       </li>

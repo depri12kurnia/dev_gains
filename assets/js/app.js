@@ -93,10 +93,6 @@ document.addEventListener('click', function (event) {
 });
 
 
-
-
-
-
 /**
  * Fungsi untuk berpindah tab pada Dashboard
  * @param {string} tabId - ID tab yang ingin diaktifkan (overview, payment, submission, settings)

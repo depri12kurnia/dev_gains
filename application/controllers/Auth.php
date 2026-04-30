@@ -89,7 +89,15 @@ class Auth extends CI_Controller
 				$this->M_log_user->save_log($user->id, 'User login');
 
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				redirect('dashboard', 'refresh');
+				// cek role / group
+				if ($this->ion_auth->in_group('participant')) {
+					redirect('dashboard', 'refresh');
+				} elseif ($this->ion_auth->in_group(['admin', 'reviewer'])) {
+					redirect('admin/dashboard', 'refresh');
+				} else {
+					// default kalau tidak masuk group mana pun
+					redirect('auth/login', 'refresh');
+				}
 			} else {
 				// if the login was un-successful
 				// redirect them back to the login page
@@ -806,9 +814,9 @@ class Auth extends CI_Controller
 		// $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
-		$this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'trim|required|matches[password]');
-		$this->form_validation->set_rules('first_name', 'Nama Depan', 'trim|required');
-		$this->form_validation->set_rules('last_name', 'Nama Belakang', 'trim|required');
+		$this->form_validation->set_rules('password_confirm', 'Retype Password', 'trim|required|matches[password]');
+		$this->form_validation->set_rules('first_name', 'Full Name', 'trim|required');
+		$this->form_validation->set_rules('phone', 'Phone Number', 'trim|required');
 
 		if ($this->form_validation->run() == FALSE) {
 			$this->session->set_flashdata('message', validation_errors());
@@ -822,17 +830,17 @@ class Auth extends CI_Controller
 		$identity  = $email;
 		$additional_data = [
 			'first_name' => $this->input->post('first_name'),
-			'last_name'  => $this->input->post('last_name')
+			'phone'  => $this->input->post('phone')
 		];
 
 		// Proses registrasi dengan Ion Auth
 		if ($this->ion_auth->register($identity, $password, $email, $additional_data)) {
-			$this->session->set_flashdata('message', 'Registrasi berhasil! Silakan login.');
+			$this->session->set_flashdata('message', 'Registration successful! Please login.');
 			// Mendapatkan user yang login
 			// Redirect Jika Berhasil Registrasi
 			redirect('auth/login');
 		} else {
-			$this->session->set_flashdata('message', 'Gagal melakukan registrasi!');
+			$this->session->set_flashdata('message', 'Failed to register!');
 			redirect('auth/register');
 		}
 	}
@@ -851,7 +859,7 @@ class Auth extends CI_Controller
 		$user = $this->ion_auth->where('email', $email)->users()->row();
 
 		if (!$user) {
-			$this->session->set_flashdata('message', 'Email tidak ditemukan!');
+			$this->session->set_flashdata('message', 'Email not found!');
 			redirect('auth/forgot_password');
 		}
 

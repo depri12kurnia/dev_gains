@@ -14,7 +14,7 @@ class Competitions extends CI_Controller
     {
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'International Research Pitch Competition (IRPC)';
-        $data['content'] = 'competition';
+        $data['content'] = 'competition/irpc';
         $data['comp_type'] = 'irpc';
         $this->load->view('layouts/userlte3', $data);
     }
@@ -23,7 +23,7 @@ class Competitions extends CI_Controller
     {
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Best Published Paper Award (BPPA)';
-        $data['content'] = 'competition';
+        $data['content'] = 'competition/bppa';
         $data['comp_type'] = 'bppa';
         $this->load->view('layouts/userlte3', $data);
     }
@@ -32,7 +32,7 @@ class Competitions extends CI_Controller
     {
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Academic & Health Innovation Challenge (AHIC)';
-        $data['content'] = 'competition';
+        $data['content'] = 'competition/ahic';
         $data['comp_type'] = 'ahic';
         $this->load->view('layouts/userlte3', $data);
     }
@@ -41,7 +41,7 @@ class Competitions extends CI_Controller
     {
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Evidence-to-Impact Policy Brief Competition (E2I-PBC)';
-        $data['content'] = 'competition';
+        $data['content'] = 'competition/e2ipbc';
         $data['comp_type'] = 'e2ipbc';
         $this->load->view('layouts/userlte3', $data);
     }

@@ -1,0 +1,119 @@
+/* === DataTables Custom Overrides === */
+
+/* Reset Bootstrap table styles */
+.table {
+    margin-bottom: 0 !important;
+}
+
+/* Table styling dengan theme utama */
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
+table.dataTable thead th {
+    background: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 8px !important;
+    font-weight: 600 !important;
+}
+
+table.dataTable tbody td {
+    padding: 10px 8px !important;
+    border-bottom: 1px solid var(--gray-200) !important;
+    vertical-align: middle !important;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: var(--primary-light) !important;
+}
+
+/* Buttons */
+.btn-success {
+    background: var(--secondary) !important;
+    border: none !important;
+}
+
+.btn-success:hover {
+    background: #6ab77a !important;
+}
+
+.btn-primary {
+    background: var(--primary) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* Modal */
+.modal-content {
+    border: 1px solid var(--gray-200) !important;
+    border-radius: 0.75rem !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.modal-header .modal-title {
+    font-weight: 600 !important;
+}
+
+/* Form controls di modal */
+.modal-body .form-control {
+    border: 1px solid var(--gray-300) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+}
+
+.modal-body .form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-light) !important;
+}
+
+.modal-body .form-label {
+    color: var(--gray-700) !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Card styling */
+.card {
+    border: 1px solid var(--gray-200) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.card-header {
+    background: white !important;
+    border-bottom: 1px solid var(--gray-200) !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* Table responsive */
+.table-responsive {
+    border: none !important;
+}
+
+/* Pagination */
+.dataTables_paginate .paginate_button {
+    border: none !important;
+    background: transparent !important;
+    padding: 5px 10px !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: var(--primary-light) !important;
+}
+
+.dataTables_paginate .paginate_button.current {
+    background: var(--primary) !important;
+    color: white !important;
+}

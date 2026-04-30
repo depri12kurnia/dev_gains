@@ -7,7 +7,25 @@
 </head>
 
 <body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+
+            <?php if ($this->session->userdata('login')) { ?>
+
+                $('#nav-auth-buttons').addClass('hidden');
+                $('#nav-user-buttons').removeClass('hidden').addClass('flex');
+
+            <?php } else { ?>
+
+                $('#nav-auth-buttons').removeClass('hidden');
+                $('#nav-user-buttons').addClass('hidden');
+
+            <?php } ?>
+
+        });
+    </script>
     <!-- Navbar -->
     <?php $this->load->view('layouts/parts_user/navbar'); ?>
 
@@ -33,8 +51,16 @@
     <!-- Footer -->
     <?php $this->load->view('layouts/parts_user/footer'); ?>
 
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.bootstrap5.min.js"></script>
     <!-- JavaScript Application Logic -->
     <script src="<?= base_url('assets/js/app.js') ?>"></script>
+
 </body>
 
 </html>

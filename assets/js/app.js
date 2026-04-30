@@ -45,7 +45,7 @@ function updateActiveNav() {
         currentPage = 'timeline';
     } else if (currentPath.includes('/reviewers')) {
         currentPage = 'reviewers';
-    } else if (currentPath.includes('/auth')) {
+    } else if (currentPath.includes('/auth/login')) {
         currentPage = 'auth';
     } else if (currentPath.includes('/dashboard')) {
         currentPage = 'dashboard';
@@ -89,5 +89,73 @@ document.addEventListener('click', function (event) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             // Dropdown handling if needed
         });
+    }
+});
+
+
+
+
+
+
+/**
+ * Fungsi untuk berpindah tab pada Dashboard
+ * @param {string} tabId - ID tab yang ingin diaktifkan (overview, payment, submission, settings)
+ */
+function switchDashboardTab(tabId) {
+    // 1. Ambil semua elemen konten tab dan tombol tab
+    const contents = document.querySelectorAll('.dash-content');
+    const buttons = document.querySelectorAll('.dash-tab-btn');
+
+    // 2. Sembunyikan semua konten dan hapus status active pada tombol
+    contents.forEach(content => {
+        content.classList.remove('active');
+    });
+
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 3. Tampilkan konten yang dipilih
+    const targetContent = document.getElementById('dash-tab-' + tabId);
+    const targetButton = document.getElementById('tab-btn-' + tabId);
+
+    if (targetContent && targetButton) {
+        targetContent.classList.add('active');
+        targetButton.classList.add('active');
+
+        // Opsional: Simpan status tab terakhir di sessionStorage agar tidak reset saat refresh
+        sessionStorage.setItem('activeDashTab', tabId);
+    } else {
+        console.error('Tab ID atau Button ID tidak ditemukan: ' + tabId);
+    }
+}
+
+/**
+ * Logika tambahan untuk menangani dropdown "Other Country"
+ */
+function handleCountryChange(select) {
+    const otherContainer = document.getElementById('other-country-container');
+    const otherInput = document.getElementById('other-country-input');
+
+    if (select.value === 'Other') {
+        otherContainer.classList.remove('hidden');
+        otherInput.setAttribute('required', 'required');
+    } else {
+        otherContainer.classList.add('hidden');
+        otherInput.removeAttribute('required');
+    }
+}
+
+// Menjalankan pengecekan saat halaman selesai dimuat
+document.addEventListener('DOMContentLoaded', function () {
+    // Re-inisialisasi Lucide Icons jika menggunakan library Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Mengembalikan tab terakhir yang dibuka (jika ada di session)
+    const savedTab = sessionStorage.getItem('activeDashTab');
+    if (savedTab) {
+        switchDashboardTab(savedTab);
     }
 });

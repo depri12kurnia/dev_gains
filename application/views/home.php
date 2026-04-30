@@ -1,5 +1,5 @@
 <!-- PAGE: HOME -->
-<div id="page-home" class="page-section active">
+<div id="page-home" class="page-section-home active">
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-bg-shape hero-shape-1"></div>
@@ -14,7 +14,7 @@
                     Join the International Research & Innovation Competition for Lecturers and Researchers 2026. Transforming applied research into tangible impacts for healthcare practice, public policy, and community empowerment.
                 </p>
                 <div class="hero-actions">
-                    <a href="<?php echo base_url('auth'); ?>" class="btn btn-gradient text-lg" style="text-decoration: none; display: inline-block;">
+                    <a href="<?php echo base_url('auth/register'); ?>" class="btn btn-gradient text-lg" style="text-decoration: none; display: inline-block;">
                         Register / Login
                     </a>
                     <a href="<?php echo base_url('about'); ?>" class="btn btn-outline text-lg" style="text-decoration: none; display: inline-block;">

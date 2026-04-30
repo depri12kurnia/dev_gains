@@ -14,11 +14,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
 
-    <!-- Bootstrap Components Replacement (tanpa Bootstrap CSS) -->
-    <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap-replacement.css') ?>">
-
     <!-- Custom CSS5 (Modern CSS) -->
-    <link rel="stylesheet" href="<?= base_url('assets/css/utama.css') ?>">
-
-    <!-- DataTables Custom Overrides -->
-    <link rel="stylesheet" href="<?= base_url('assets/css/datatables-custom.css') ?>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/depri12kurnia/dev_gains@fbb5e840a70615c9cb99ca7e96db3b8abfe43858/assets/css/utama.css">

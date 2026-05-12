@@ -4,20 +4,21 @@
         <div class="card card-primary card-outline">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-credit-card mr-2"></i>
-                    Data Payment
+                    <i class="fas fa-file-alt mr-2"></i>
+                    Data Submission
                 </h3>
             </div>
-
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="data_payment" class="table table-bordered table-striped">
+                    <table id="data_submission" class="table table-bordered table-striped small">
                         <thead>
                             <tr>
-                                <th width="5%">No</th>
+                                <th>#</th>
                                 <th>Email</th>
-                                <th>Bank</th>
-                                <th>Sender</th>
+                                <th>Institution</th>
+                                <th>Country</th>
+                                <th>Category</th>
+                                <th>Title</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -44,37 +45,56 @@
                     <input type="hidden" value="" name="id" />
                     <div class="form-body">
                         <div class="row">
-                            <div class="col-lg-8 col-12">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6">Proof of Payment</label>
-                                    <div class="col-md-12">
-                                        <div id="filePreviewContainer" class="d-flex flex-column align-items-center">
-                                            <embed id="previewEmbed" src="" type="" class="img-fluid" style="max-width: 100%; height: auto; cursor: pointer; display: none;" onclick="previewFile(this.dataset.fileUrl, this.dataset.fileType)">
-                                            <p id="noProofText" class="text-muted mt-2" style="display: none;">No proof file available</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-12">
+                            <div class="col-lg-6 col-12">
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Email</label>
                                     <div class="col-md-12">
-                                        <input name="email" placeholder="Email" class="form-control" type="text" readonly>
+                                        <input name="email" placeholder="Email" class="form-control" type="email" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Bank</label>
+                                    <label class="control-label col-md-3">Institution</label>
                                     <div class="col-md-12">
-                                        <input name="bank_name" placeholder="Bank" class="form-control" type="text" readonly>
+                                        <input name="institution" placeholder="Institution" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Sender Name</label>
+                                    <label class="control-label col-md-3">Country</label>
                                     <div class="col-md-12">
-                                        <input name="sender_name" placeholder="Sender Name" class="form-control" type="text" readonly>
+                                        <input name="country" placeholder="Country" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Category</label>
+                                    <div class="col-md-12">
+                                        <input name="category" placeholder="Category" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Title</label>
+                                    <div class="col-md-12">
+                                        <input name="title" placeholder="Title" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Link</label>
+                                    <div class="col-md-12">
+                                        <input name="link" id="link" placeholder="Link" class="form-control" type="url" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-12">Click Here to Preview</label>
+                                    <div class="col-md-12">
+                                        <a href="#" id="previewLink" target="_blank" style="display: none;"><button type="button" class="btn btn-warning"><i class="fas fa-link text-primary" aria-hidden="true"></i> Preview Link</button></a>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
@@ -83,22 +103,22 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Status</label>
                             <div class="col-md-12">
-                                <input type="radio" name="status" value="approved"> Approved
-                                <input type="radio" name="status" value="rejected"> Rejected
+                                <input type="radio" name="status" value="finalist"> Finalist
+                                <input type="radio" name="status" value="not selected"> Not Selected
                             </div>
                         </div>
                         <!-- if status rejected -->
                         <div class="form-group" id="reason_group" style="display: none;">
                             <label class="control-label col-md-3">Reason</label>
                             <div class="col-md-12">
-                                <textarea name="comment" placeholder="Reason" class="form-control" rows="3" readonly></textarea>
+                                <textarea name="comment" placeholder="Reason" class="form-control" rows="3"></textarea>
                                 <span class="help-block"></span>
                             </div>
                         </div>
                         <!-- end if status rejected -->
                     </div>
                     <div class="modal-footer justify-content-start">
-                        <button type=" button" class="btn btn-primary" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnSave">Save Verification</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -139,22 +159,31 @@
         }
     });
 
-    function viewPayment(id) {
+    function viewSubmission(id) {
         save_method = 'update';
         $('#form')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
+
+        // Hide preview link on modal open
+        $('#previewLink').hide();
         $.ajax({
-            url: "<?php echo site_url('admin/payment/ajax_view/') ?>" + id,
+            url: "<?php echo site_url('admin/submissions/ajax_view/') ?>" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('[name="id"]').val(data.id);
                 $('[name="email"]').val(data.email);
-                $('[name="bank_name"]').val(data.bank_name);
-                $('[name="sender_name"]').val(data.sender_name);
+                $('[name="institution"]').val(data.institution);
+                $('[name="country"]').val(data.country);
+                $('[name="category"]').val(data.category);
+                $('[name="title"]').val(data.title);
+                $('[name="link"]').val(data.link);
                 $('[name="proof_file"]').val(data.proof_file || '');
                 $('[name="comment"]').val(data.comment || '');
+
+                // Update preview link
+                updatePreviewLink(data.link);
 
                 $('input[name="status"]').prop('checked', false);
                 if (data.status) {
@@ -165,7 +194,7 @@
                 toggleReasonField();
 
                 $('#modal_form').modal('show');
-                $('.modal-title').text('View Payment');
+                $('.modal-title').text('View Submission');
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('Error getting data from ajax');
@@ -173,7 +202,7 @@
         });
     }
 
-    function verifyPayment(id, status, comment) {
+    function verifySubmission(id, status, comment) {
         if (status === 'rejected' && (!comment || !comment.trim())) {
             Swal.fire('Warning', 'Please provide a rejection reason.', 'warning');
             return;
@@ -181,7 +210,7 @@
 
         Swal.fire({
             title: 'Konfirmasi',
-            text: 'Update status payment?',
+            text: 'Update status submission?',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Ya',
@@ -189,7 +218,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "<?= site_url('admin/payment/ajax_verify'); ?>",
+                    url: "<?= site_url('admin/submissions/ajax_verify'); ?>",
                     type: "POST",
                     data: {
                         id: id,
@@ -240,7 +269,7 @@
         var fileType = getFileTypeFromUrl(fileName);
 
         if (fileName) {
-            proofUrl = "<?= base_url('public/uploads/payment/'); ?>" + encodeURIComponent(fileName);
+            proofUrl = "<?= base_url('public/uploads/submissions/'); ?>" + encodeURIComponent(fileName);
         }
 
         var isImage = isImageFile(fileType);
@@ -258,9 +287,17 @@
         }
     }
 
+    function updatePreviewLink(linkValue) {
+        if (linkValue && linkValue.trim()) {
+            $('#previewLink').attr('href', linkValue).show();
+        } else {
+            $('#previewLink').attr('href', '#').hide();
+        }
+    }
+
     function toggleReasonField() {
         var selected = $('input[name="status"]:checked').val();
-        if (selected === 'rejected') {
+        if (selected === 'not selected') {
             $('#reason_group').show();
             $('[name="comment"]').prop('readonly', false);
         } else {
@@ -279,15 +316,15 @@
 
     $(document).ready(function() {
         // Cek apakah DataTable sudah diinisialisasi
-        if (!$.fn.DataTable.isDataTable('#data_payment')) {
-            table = $('#data_payment').DataTable({
+        if (!$.fn.DataTable.isDataTable('#data_submission')) {
+            table = $('#data_submission').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "responsive": false,
                 "autoWidth": false,
                 "lengthChange": true,
                 "ajax": {
-                    "url": "<?php echo site_url('admin/payment/ajax_list') ?>",
+                    "url": "<?php echo site_url('admin/submissions/ajax_list') ?>",
                     "type": "POST",
                     "data": function(d) {
                         d.csrf_token_jkt3 = getCsrfToken(); // Kirim CSRF token sebagai data POST
@@ -301,11 +338,17 @@
         }
 
         $('input[name="status"]').on('change', toggleReasonField);
+
+        // Update preview link when link input changes
+        $('[name="link"]').on('input', function() {
+            updatePreviewLink($(this).val());
+        });
+
         $('#btnSave').on('click', function() {
             var id = $('[name="id"]').val();
             var status = $('input[name="status"]:checked').val();
             var comment = $('[name="comment"]').val();
-            verifyPayment(id, status, comment);
+            verifySubmission(id, status, comment);
         });
     });
 </script>

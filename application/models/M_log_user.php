@@ -21,13 +21,13 @@ class M_log_user extends CI_Model
 
     // Fungsi untuk mengambil log aktivitas pengguna
     var $table = 'user_logs';
-    var $column_order = array('user_logs.id', 'users.username', 'user_logs.action', 'user_logs.timestamp');
-    var $column_search = array('user_logs.id', 'users.username', 'user_logs.action', 'user_logs.timestamp');
+    var $column_order = array('user_logs.id', 'users.email', 'user_logs.action', 'user_logs.timestamp');
+    var $column_search = array('user_logs.id', 'users.email', 'user_logs.action', 'user_logs.timestamp');
     var $order = array('user_logs.id' => 'asc');
 
     private function _get_datatables_query()
     {
-        $this->db->select('user_logs.id, users.username as user_id, user_logs.action, user_logs.timestamp');
+        $this->db->select('user_logs.id, users.email as user_id, user_logs.action, user_logs.timestamp');
         $this->db->from($this->table);
         $this->db->join('users', 'users.id = user_logs.user_id');
         $this->db->order_by('user_logs.timestamp', 'desc');

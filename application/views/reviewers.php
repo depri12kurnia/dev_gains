@@ -32,31 +32,6 @@
                 </div>
             </div>
 
-            <!-- BPPA -->
-            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                <div class="p-6 border" style="border-width:0 0 1px 0; background: var(--secondary-light); display:flex; align-items:center;">
-                    <i data-lucide="users" class="text-secondary mr-2"></i>
-                    <h3 class="text-xl">Best Published Paper Award (BPPA)</h3>
-                </div>
-                <div class="p-6 grid md-grid-3">
-                    <div class="bg-gray-50 p-4 border rounded-lg">
-                        <div style="width:3rem; height:3rem; background:var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1rem;"><i data-lucide="user-plus" class="text-gray-500"></i></div>
-                        <h4 class="text-sm text-primary mb-1">International Reviewer</h4>
-                        <p class="text-sm text-gray-700">Senior academic / international peer-reviewer from German institutional partner</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 border rounded-lg">
-                        <div style="width:3rem; height:3rem; background:var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1rem;"><i data-lucide="user-plus" class="text-gray-500"></i></div>
-                        <h4 class="text-sm text-primary mb-1">National Reviewer 1</h4>
-                        <p class="text-sm text-gray-700">Editor of nationally indexed scholarly journals</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 border rounded-lg">
-                        <div style="width:3rem; height:3rem; background:var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1rem;"><i data-lucide="user-plus" class="text-gray-500"></i></div>
-                        <h4 class="text-sm text-primary mb-1">National Reviewer 2</h4>
-                        <p class="text-sm text-gray-700">Senior academic in health sciences</p>
-                    </div>
-                </div>
-            </div>
-
             <!-- AHIC -->
             <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
                 <div class="p-6 border" style="border-width:0 0 1px 0; background: var(--primary-light); display:flex; align-items:center;">

@@ -20,7 +20,7 @@
                 <div class="timeline-card">
                     <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; background: var(--secondary-light); color: var(--primary); font-weight: bold; font-size: 0.875rem; margin-bottom: 0.75rem;">May – June 2026</span>
                     <h3 class="text-xl flex items-center mb-2"><i data-lucide="upload" class="text-primary mr-2" style="width: 1.25rem;"></i> Call for Abstract & Submission</h3>
-                    <p class="text-gray-600">Open for oral & poster submissions across all four competition categories.</p>
+                    <p class="text-gray-600">Open for submissions across three main competition categories: International Pitch, Innovation Challenge, and Policy Brief.</p>
                 </div>
             </div>
             <div class="timeline-item">

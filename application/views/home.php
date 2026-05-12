@@ -8,10 +8,11 @@
         <div class="container hero-content">
             <div class="hero-text">
                 <h1 class="hero-title">
-                    <span class="text-gradient">Global Academic Innovation Series (GAINS)</span> 2026
+                    <span class="text-gradient">Global Academic Innovation Series (GAINS) 2026</span> <br>
+                    “Innovative Approaches to Address Non-Communicable Diseases and Promote Comprehensive Women’s Health in a Changing Global Landscape”
                 </h1>
                 <p class="hero-subtitle">
-                    Join the International Research & Innovation Competition for Lecturers and Researchers 2026. Transforming applied research into tangible impacts for healthcare practice, public policy, and community empowerment.
+                    Join the international research & innovation competition for lecturers and researchers. Transform your applied research into tangible impacts for global healthcare practice, public policy, and community empowerment.
                 </p>
                 <div class="hero-actions">
                     <a href="<?php echo base_url('auth/register'); ?>" class="btn btn-gradient text-lg" style="text-decoration: none; display: inline-block;">

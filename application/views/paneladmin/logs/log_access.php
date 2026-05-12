@@ -102,12 +102,17 @@
 
                 dataType: "JSON",
                 success: function(data) {
-                    $('#modal_form').modal('hide');
-                    reload_table();
+                    if (data.status === "success") {
+                        alert("All logs deleted successfully!");
+                        table.ajax.reload(); // Reload DataTable
 
-                    // console.log("Token CSRF baru:", data.csrf_token); // Debug
-                    // Perbarui CSRF token setelah request berhasil
-                    document.cookie = "csrf_cookie_jkt3=" + data.csrf_token + "; path=/";
+                        // Perbarui CSRF token setelah request berhasil
+                        if (data.csrf_token) {
+                            document.cookie = "csrf_cookie_jkt3=" + data.csrf_token + "; path=/";
+                        }
+                    } else {
+                        alert("Failed to delete logs: " + (data.message || "Unknown error"));
+                    }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert('Error deleting data');

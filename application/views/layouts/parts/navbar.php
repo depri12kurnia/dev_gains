@@ -79,7 +79,7 @@
                       </li>
                       <li class="nav-header">Master Data</li>
                       <li class="nav-item">
-                          <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payments' ? 'active' : ''; ?>">
+                          <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payment' ? 'active' : ''; ?>">
                               <i class="nav-icon fas fa-credit-card"></i>
                               <p>
                                   Payment

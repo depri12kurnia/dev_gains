@@ -1,14 +1,14 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Payment extends CI_Controller
+class Submissions extends CI_Controller
 {
 
     public function __construct()
     {
         parent::__construct();
         $this->load->model('M_settings');
-        $this->load->model('M_payment');
+        $this->load->model('M_submission');
         $this->load->model('M_log_user');
         $this->load->model('M_users');
 
@@ -21,8 +21,8 @@ class Payment extends CI_Controller
     {
         $data['website'] = $this->M_settings->get_all_settings();
         $data['groups'] = $this->M_users->get_groups();
-        $data['title'] = 'Payment Verification | Admin Panel';
-        $data['content'] = 'paneladmin/payment/list';
+        $data['title'] = 'Submission Management | Admin Panel';
+        $data['content'] = 'paneladmin/submission/list';
         $this->load->view('layouts/adminlte3', $data);
     }
 
@@ -30,35 +30,38 @@ class Payment extends CI_Controller
     {
         $this->validate_csrf();
 
-        $list = $this->M_payment->get_datatables();
+        $list = $this->M_submission->get_datatables();
         $data = array();
         $no = $_POST['start'];
-        foreach ($list as $payment) {
+        foreach ($list as $submission) {
             $no++;
             $row = array();
             $row[] = $no++;
-            $row[] = $payment->email;
-            $row[] = $payment->bank_name;
-            $row[] = $payment->sender_name;
-            if ($payment->status == 'pending') {
-                $status_icon = '<i class="fas fa-paper-plane text-primary" title="Pending"></i>';
-            } elseif ($payment->status == 'rejected') {
-                $status_icon = '<i class="fas fa-times-circle text-danger" title="Rejected"></i>';
-            } elseif ($payment->status == 'approved') {
-                $status_icon = '<i class="fas fa-check-circle text-success" title="Approved"></i>';
+            $row[] = $submission->email;
+            $row[] = $submission->institution;
+            $row[] = $submission->country;
+            $row[] = $submission->category;
+            $row[] = $submission->title;
+
+            if ($submission->status == 'submitted') {
+                $status_icon = '<i class="fas fa-paper-plane text-primary" title="Submitted"></i>';
+            } elseif ($submission->status == 'not selected') {
+                $status_icon = '<i class="fas fa-times-circle text-danger" title="Not Selected"></i>';
+            } elseif ($submission->status == 'finalist') {
+                $status_icon = '<i class="fas fa-check-circle text-success" title="Finalist"></i>';
             } else {
-                $status_icon = $payment->status;
+                $status_icon = $submission->status;
             }
             $row[] = $status_icon;
-            $row[] = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Verify" onclick="viewPayment(' . "'" . $payment->id . "'" . ')"><i class="fa fa-eye"></i></a>
+            $row[] = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Verify" onclick="viewSubmission(' . "'" . $submission->id . "'" . ')"><i class="fa fa-eye"></i></a>
                       ';
             $data[] = $row;
         }
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->M_payment->count_all(),
-            "recordsFiltered" => $this->M_payment->count_filtered(),
+            "recordsTotal" => $this->M_submission->count_all(),
+            "recordsFiltered" => $this->M_submission->count_filtered(),
             "data" => $data,
             "csrf_token" => $this->security->get_csrf_hash()
         );
@@ -67,7 +70,7 @@ class Payment extends CI_Controller
 
     public function ajax_view($id)
     {
-        $data = $this->M_payment->get_by_id($id);
+        $data = $this->M_submission->get_by_id($id);
         echo json_encode($data);
     }
 
@@ -80,15 +83,15 @@ class Payment extends CI_Controller
         $comment = $this->input->post('comment');
 
         $data = ['status' => $status];
-        if ($status === 'rejected') {
+        if ($status === 'not selected') {
             $data['comment'] = $comment;
         }
 
-        $this->M_payment->update_payment($id, $data);
+        $this->M_submission->update_submission($id, $data);
 
         // log
         $user = $this->ion_auth->user()->row();
-        $this->M_log_user->save_log($user->id, "Verify payment ID: $id -> $status");
+        $this->M_log_user->save_log($user->id, "Verify submission ID: $id -> $status");
 
         echo json_encode([
             "status" => TRUE,

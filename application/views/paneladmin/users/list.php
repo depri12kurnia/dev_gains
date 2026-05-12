@@ -11,10 +11,8 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Username</th>
                             <th>Email</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Name</th>
                             <th>Group</th>
                             <th>Action</th>
                         </tr>
@@ -25,10 +23,8 @@
                     <tfoot>
                         <tr>
                             <th>#</th>
-                            <th>Username</th>
                             <th>Email</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Name</th>
                             <th>Group</th>
                             <th>Action</th>
                         </tr>

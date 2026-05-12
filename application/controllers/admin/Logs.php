@@ -71,7 +71,26 @@ class Logs extends CI_Controller
 
     public function delete_all_logs()
     {
-        $deleted_rows = $this->M_log->delete_all_logs();
-        echo "Deleted $deleted_rows old log(s)";
+        try {
+            $deleted_rows = $this->M_log->delete_all_logs();
+
+            if ($deleted_rows !== false) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => "Deleted $deleted_rows old log(s) successfully",
+                    'csrf_token' => $this->security->get_csrf_hash()
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to delete logs'
+                ]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Database error: ' . $e->getMessage()
+            ]);
+        }
     }
 }

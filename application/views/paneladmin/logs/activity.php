@@ -6,9 +6,12 @@
             </div>
             <div class="col-6">
                 <p class="btn btn-group">
-                    <button class="btn btn-danger btn-sm" onclick="delete_activity()"><i class="fa fa-trash"></i> Delete All</a></button>
+                    <button class="btn btn-danger btn-sm" onclick="delete_activity()">
+                        <i class="fa fa-trash"></i> Delete All Activity Logs
+                    </button>
                 </p>
             </div>
+
             <!-- /.card-header -->
             <div class="card-body">
                 <table id="data_activity" class="table table-bordered table-hover small">
@@ -37,20 +40,30 @@
         </div>
         <!-- /.card -->
     </div>
-    <!-- /.col -->
 </div>
+<!-- /.col -->
+
 <input type="hidden" id="csrf_token" name="csrf_token_jkt3" value="<?= $this->security->get_csrf_hash(); ?>">
 
 <script type="text/javascript">
     var save_method;
     var table;
 
-    function getCsrfToken() {
-        let token = document.cookie.split('; ')
-            .find(row => row.startsWith('csrf_cookie_jkt3='))
-            ?.split('=')[1] || '';
+    // CSRF Token handling
+    var csrfName = '<?php echo $csrf_token; ?>';
+    var csrfHash = '<?php echo $csrf_hash; ?>';
 
-        // console.log("CSRF Token dari Cookie:", token); // Debug
+    function refreshCsrfToken() {
+        $.get('<?php echo base_url('admin/activity/get_csrf_token'); ?>', function(response) {
+            var data = JSON.parse(response);
+            csrfName = data.csrf_token;
+            csrfHash = data.csrf_hash;
+        });
+    }
+
+    function getCsrfToken() {
+        // Get current CSRF token from hidden input or variable
+        var token = $('#csrf_token').val() || csrfHash;
         return token;
     }
 
@@ -86,31 +99,31 @@
     });
 
     function delete_activity() {
-        if (confirm('Are you sure you want to delete this data?')) {
+        if (confirm('Are you sure you want to delete all activity logs?')) {
             $.ajax({
                 url: "<?php echo site_url('admin/activity/delete_all_activity') ?>",
                 type: "POST",
-                data: {
-                    csrf_token_jkt3: getCsrfToken() // Kirim CSRF token
-                },
                 dataType: "JSON",
-                cache: false, // Hindari cache request
+                cache: false,
+                data: {
+                    'csrf_token_jkt3': getCsrfToken() // Send CSRF token
+                },
                 success: function(data) {
                     if (data.status === "success") {
-                        $('#modal_form').modal('hide');
-                        reload_table();
+                        alert("All activity logs deleted successfully!");
+                        table.ajax.reload(); // Reload DataTable
 
-                        // Debugging: Tampilkan token CSRF baru di console
-                        console.log("Token CSRF baru:", data.csrf_token);
-
-                        // Update CSRF token di cookie untuk request selanjutnya
-                        document.cookie = "csrf_cookie_jkt3=" + data.csrf_token + "; path=/";
+                        // Update CSRF token untuk request selanjutnya
+                        if (data.csrf_token) {
+                            csrfHash = data.csrf_token;
+                        }
                     } else {
                         alert("Failed to delete activity: " + data.message);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error("AJAX Error: ", textStatus, errorThrown);
+                    console.error("Response: ", jqXHR.responseText);
                     alert("Error deleting data. Please try again.");
                 }
             });

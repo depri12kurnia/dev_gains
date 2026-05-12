@@ -59,7 +59,7 @@
     <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.8/js/dataTables.bootstrap5.min.js"></script>
     <!-- JavaScript Application Logic -->
-    <script src="<?= base_url('assets/js/app.js') ?>"></script>
+    <script src="https://cdn.jsdelivr.net/gh/depri12kurnia/dev_gains@74545b357d2dd7c4e5fcd7478bad28d9775747ac/assets/js/app.js"></script>
 
 </body>
 

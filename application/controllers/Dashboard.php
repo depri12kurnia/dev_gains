@@ -29,20 +29,22 @@ class Dashboard extends CI_Controller
         $submission = $this->M_submission->get_by_user($user_id);
 
         // =========================
-        // LOGIC STATUS (FIX)
+        // LOGIC STATUS PAYMENT
         // =========================
         if (!$payment) {
             $status = 'registered';
         } elseif ($payment->status == 'pending') {
-            $status = 'payment_pending';
+            $status = 'pending';
         } elseif ($payment->status == 'rejected') {
-            $status = 'payment_rejected';
-        } elseif ($payment->status == 'approved' && !$submission) {
+            $status = 'rejected';
+        } elseif ($payment->status == 'approved') {
             $status = 'approved';
         } elseif ($submission && $submission->status == 'submitted') {
             $status = 'submitted';
-        } elseif ($submission && $submission->status == 'reviewed') {
-            $status = 'reviewed';
+        } elseif ($submission && $submission->status == 'not selected') {
+            $status = 'not selected';
+        } elseif ($submission && $submission->status == 'finalist') {
+            $status = 'finalist';
         } else {
             $status = 'registered';
         }
@@ -50,17 +52,37 @@ class Dashboard extends CI_Controller
         $data['user_status'] = $status;
 
         // =========================
+        // LOGIC STATUS SUBMISSION
+        // =========================
+        if (!$submission) {
+            $status_submission = 'registered';
+        } elseif ($submission->status == 'submitted') {
+            $status_submission = 'submitted';
+        } elseif ($submission->status == 'not selected') {
+            $status_submission = 'not selected';
+        } elseif ($submission->status == 'finalist') {
+            $status_submission = 'finalist';
+        } else {
+            $status_submission = 'registered';
+        }
+
+        $data['submission_status'] = $status_submission;
+
+        // =========================
         // LABEL STATUS (UI)
         // =========================
         $status_label = [
             'registered'       => 'Registered',
-            'payment_pending'  => 'Payment Pending',
+            'pending'          => 'Payment Pending',
             'approved'         => 'Payment Approved',
-            'submitted'        => 'Submission Sent'
+            'rejected'         => 'Payment Rejected',
+            'submitted'        => 'Submission Sent',
+            'not selected'     => 'Submission Not Selected',
+            'finalist'         => 'Finalist'
         ];
 
         // =========================
-        // DATA USER (FIXED)
+        // DATA USER
         // =========================
         $data['user'] = [
             'name'     => $user->first_name,
@@ -123,12 +145,12 @@ class Dashboard extends CI_Controller
 
                 // UPDATE
                 $this->M_payment->update_by_user($user_id, $data);
-                $this->session->set_flashdata('success', 'Payment berhasil diupdate');
+                $this->session->set_flashdata('success', 'Payment successfully updated');
             } else {
 
                 // INSERT
                 $this->M_payment->insert_payment($data);
-                $this->session->set_flashdata('success', 'Payment berhasil dikirim');
+                $this->session->set_flashdata('success', 'Payment successfully submitted');
             }
 
             $this->session->set_flashdata('uploaded_file', $file['file_name']);
@@ -164,11 +186,11 @@ class Dashboard extends CI_Controller
         if ($existing) {
             // UPDATE
             $this->M_submission->update_by_user($user_id, $data);
-            $this->session->set_flashdata('success', 'Submission berhasil diupdate');
+            $this->session->set_flashdata('success', 'Submission successfully updated');
         } else {
             // INSERT
             $this->M_submission->insert_submission($data);
-            $this->session->set_flashdata('success', 'Submission berhasil disimpan');
+            $this->session->set_flashdata('success', 'Submission successfully saved');
         }
 
         redirect('dashboard');
@@ -197,10 +219,45 @@ class Dashboard extends CI_Controller
         );
 
         if ($change) {
-            $this->session->set_flashdata('success', 'Password berhasil diubah');
-            $this->ion_auth->logout(); // optional: force login ulang
+            $this->session->set_flashdata('success_update_password', 'Password changed successfully, please log out and then log in again.');
         } else {
             $this->session->set_flashdata('error', $this->ion_auth->errors());
+        }
+
+        redirect('dashboard');
+    }
+
+    public function update_profile()
+    {
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
+        $this->form_validation->set_rules('phone', 'Phone', 'required|trim');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('dashboard');
+        }
+
+        $user_id = $this->session->userdata('user_id');
+
+        $data = [
+            'first_name' => $this->input->post('first_name'),
+            'phone'      => $this->input->post('phone')
+        ];
+
+        // Update user data
+        $this->db->where('id', $user_id);
+        $update = $this->db->update('users', $data);
+
+        if ($update) {
+            // Log the activity
+            $user = $this->ion_auth->user()->row();
+            $this->M_log_user->save_log($user->id, "Updated profile information");
+
+            $this->session->set_flashdata('success_update_profile', 'Profile updated successfully');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal mengupdate profile');
         }
 
         redirect('dashboard');

@@ -8,6 +8,13 @@ class Activity extends CI_Controller
         parent::__construct();
         $this->load->model('M_settings');
         $this->load->model('M_log_user');
+        $this->load->library('ion_auth');
+        $this->load->library('form_validation');
+        $this->load->library('session');
+        $this->load->helper('url');
+        $this->load->helper('form');
+        $this->load->helper('security');
+
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login');
         }
@@ -19,10 +26,22 @@ class Activity extends CI_Controller
     public function index()
     {
         $data['website'] = $this->M_settings->get_all_settings();
+        $data['csrf_token'] = $this->security->get_csrf_token_name();
+        $data['csrf_hash'] = $this->security->get_csrf_hash();
         // 
         $data['title'] = 'Activity | Admin Panel';
         $data['content'] = 'paneladmin/logs/activity';
         $this->load->view('layouts/adminlte3', $data);
+    }
+
+    public function get_csrf_token()
+    {
+        $csrf_token = $this->security->get_csrf_token_name();
+        $csrf_hash = $this->security->get_csrf_hash();
+        echo json_encode(array(
+            'csrf_token' => $csrf_token,
+            'csrf_hash' => $csrf_hash
+        ));
     }
 
     public function get_data()
@@ -65,5 +84,47 @@ class Activity extends CI_Controller
             "csrf_token" => $this->security->get_csrf_hash() // Kirim token CSRF baru
         );
         echo json_encode($output);
+    }
+
+    public function delete_all_activity()
+    {
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        try {
+            // Check table existence first
+            if (!$this->db->table_exists('user_logs')) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Table user_logs does not exist'
+                ]);
+                return;
+            }
+
+            // Get current count for feedback
+            $current_count = $this->db->count_all('user_logs');
+
+            // Hapus semua activity log
+            $delete_result = $this->M_log_user->delete_all_activity();
+
+            if ($delete_result !== false) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'All activity logs deleted successfully (' . $delete_result . ' rows deleted)',
+                    'csrf_token' => $this->security->get_csrf_hash()
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to delete activity logs - table may not exist or be empty'
+                ]);
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Delete error: ' . $e->getMessage());
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Database error: ' . $e->getMessage()
+            ]);
+        }
     }
 }

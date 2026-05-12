@@ -54,10 +54,8 @@ class Users extends CI_Controller
             $no++;
             $row = array();
             $row[] = $no++;
-            $row[] = $user->username;
             $row[] = $user->email;
             $row[] = $user->first_name;
-            $row[] = $user->last_name;
             $row[] = $user->group_name;
             $row[] = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Edit" onclick="edit_user(' . "'" . $user->id . "'" . ')"><i class="fa fa-edit"></i></a>
                       <a class="btn btn-danger btn-sm" href="javascript:void(0)" title="Delete" onclick="delete_user(' . "'" . $user->id . "'" . ')"><i class="fa fa-trash"></i></a>';
@@ -89,16 +87,13 @@ class Users extends CI_Controller
         $group_id = $this->input->post('group_id'); // Ambil ID grup
 
         $data = array(
-            'username'   => $this->input->post('username'),
             'password'   => $this->input->post('password'),
             'email'      => $this->input->post('email'),
             'first_name' => $this->input->post('first_name'),
-            'last_name'  => $this->input->post('last_name')
         );
 
         // Daftarkan user dengan grup yang dipilih
         $user_id = $this->ion_auth->register(
-            $data['username'],
             $data['password'],
             $data['email'],
             $data,
@@ -137,10 +132,8 @@ class Users extends CI_Controller
         $group_id = $this->input->post('group_id');
 
         $data = array(
-            'username'   => $this->input->post('username'),
             'email'      => $this->input->post('email'),
-            'first_name' => $this->input->post('first_name'),
-            'last_name'  => $this->input->post('last_name')
+            'first_name' => $this->input->post('first_name')
         );
 
         // Update data user
@@ -198,19 +191,9 @@ class Users extends CI_Controller
         $data['inputerror'] = array();
         $data['status'] = TRUE;
 
-        $username = $this->input->post('username');
         $email = $this->input->post('email');
         $password = $this->input->post('password');
 
-        if (empty($username)) {
-            $data['inputerror'][] = 'username';
-            $data['error_string'][] = 'Username is required';
-            $data['status'] = FALSE;
-        } elseif ($this->M_users->is_username_exists($username)) {
-            $data['inputerror'][] = 'username';
-            $data['error_string'][] = 'Username is already taken';
-            $data['status'] = FALSE;
-        }
 
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $data['inputerror'][] = 'email';

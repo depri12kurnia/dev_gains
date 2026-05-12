@@ -43,6 +43,16 @@ class M_submission extends CI_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
+
+        // Filter by category
+        if (!empty($_POST['category'])) {
+            $this->db->where('submissions.category', $_POST['category']);
+        }
+
+        // Filter by status
+        if (!empty($_POST['status'])) {
+            $this->db->where('submissions.status', $_POST['status']);
+        }
     }
 
     function get_datatables()

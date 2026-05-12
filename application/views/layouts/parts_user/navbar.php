@@ -1,7 +1,7 @@
 <nav class="navbar">
     <div class="container">
         <div class="nav-inner">
-            <a href="<?php echo base_url('home'); ?>" class="nav-brand" style="text-decoration: none; cursor: pointer;">
+            <a href="<?php echo base_url('/'); ?>" class="nav-brand" style="text-decoration: none; cursor: pointer;">
 
                 <div class="flex flex-col">
                     <img src="<?php echo base_url(); ?>public/settings/logo/logo.png" alt="GAINS Logo" style="width: 130px; height: 80px;">
@@ -11,7 +11,7 @@
                 ☰
             </div>
             <div class="nav-menu" id="navMenu">
-                <a href="<?php echo base_url('home'); ?>" class="nav-link" data-target="home" data-page="home">
+                <a href="<?php echo base_url('/'); ?>" class="nav-link" data-target="home" data-page="home">
                     <i data-lucide="home" style="width: 1rem; height: 1rem;"></i> Home
                 </a>
 

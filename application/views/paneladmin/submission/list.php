@@ -9,6 +9,39 @@
                 </h3>
             </div>
             <div class="card-body">
+                <!-- Filter Form -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="filter_category">Category:</label>
+                        <select id="filter_category" class="form-control form-control-sm">
+                            <option value="">All Categories</option>
+                            <option value="ahic">AHIC</option>
+                            <option value="e2ipbc">E2IPBC</option>
+                            <option value="irpc">IRPC</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filter_status">Status:</label>
+                        <select id="filter_status" class="form-control form-control-sm">
+                            <option value="">All Status</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="not selected">Not Selected</option>
+                            <option value="finalist">Finalist</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>&nbsp;</label><br>
+                        <button type="button" id="btn_filter" class="btn btn-primary btn-sm">Filter</button>
+                        <button type="button" id="btn_reset" class="btn btn-secondary btn-sm">Reset</button>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <label>&nbsp;</label><br>
+                        <button type="button" id="btn_export_excel" class="btn btn-success btn-sm">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                    </div>
+                </div>
+                <!-- End Filter Form -->
                 <div class="table-responsive">
                     <table id="data_submission" class="table table-bordered table-striped small">
                         <thead>
@@ -328,6 +361,8 @@
                     "type": "POST",
                     "data": function(d) {
                         d.csrf_token_jkt3 = getCsrfToken(); // Kirim CSRF token sebagai data POST
+                        d.category = $('#filter_category').val();
+                        d.status = $('#filter_status').val();
                     },
                     "error": function(xhr) {
                         console.log("Error:", xhr.responseText);
@@ -336,6 +371,26 @@
 
             });
         }
+
+        // Filter button event
+        $('#btn_filter').click(function() {
+            table.ajax.reload();
+        });
+
+        // Reset button event
+        $('#btn_reset').click(function() {
+            $('#filter_category').val('');
+            $('#filter_status').val('');
+            table.ajax.reload();
+        });
+
+        // Export to Excel button event
+        $('#btn_export_excel').click(function() {
+            var category = $('#filter_category').val();
+            var status = $('#filter_status').val();
+            var url = "<?php echo site_url('admin/submissions/export_excel') ?>?category=" + encodeURIComponent(category) + "&status=" + encodeURIComponent(status);
+            window.open(url, '_blank');
+        });
 
         $('input[name="status"]').on('change', toggleReasonField);
 

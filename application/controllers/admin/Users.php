@@ -11,9 +11,6 @@ class Users extends CI_Controller
         $this->load->model('M_users');
         $this->load->model('M_log_user');
 
-        // if (!$this->ion_auth->is_admin()) {
-        //     redirect('auth/login');
-        // }
         if (!$this->ion_auth->in_group('admin')) {
             redirect('page_errors');
         }
@@ -90,14 +87,16 @@ class Users extends CI_Controller
             'password'   => $this->input->post('password'),
             'email'      => $this->input->post('email'),
             'first_name' => $this->input->post('first_name'),
+
         );
 
         // Daftarkan user dengan grup yang dipilih
         $user_id = $this->ion_auth->register(
+            $data['email'],
             $data['password'],
             $data['email'],
-            $data,
-            [$group_id] // Menambahkan user ke grup
+            array('first_name' => $data['first_name']),
+            array($group_id)
         );
 
         if ($user_id) {
@@ -135,6 +134,11 @@ class Users extends CI_Controller
             'email'      => $this->input->post('email'),
             'first_name' => $this->input->post('first_name')
         );
+
+        $password = $this->input->post('password');
+        if (!empty($password)) {
+            $data['password'] = $password;
+        }
 
         // Update data user
         if ($this->ion_auth->update($user_id, $data)) {
@@ -193,6 +197,7 @@ class Users extends CI_Controller
 
         $email = $this->input->post('email');
         $password = $this->input->post('password');
+        $first_name = $this->input->post('first_name');
 
 
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -202,10 +207,28 @@ class Users extends CI_Controller
         }
 
         if (empty($password) || strlen($password) < 6) {
-            $data['inputerror'][] = 'password';
-            $data['error_string'][] = 'Password must be at least 6 characters';
+            // For update, password is optional
+            if (!$this->input->post('id')) {
+                $data['inputerror'][] = 'password';
+                $data['error_string'][] = 'Password must be at least 6 characters';
+                $data['status'] = FALSE;
+            }
+        }
+
+        if (empty($first_name)) {
+            $data['inputerror'][] = 'first_name';
+            $data['error_string'][] = 'First name is required';
             $data['status'] = FALSE;
         }
+
+        $group_id = $this->input->post('group_id');
+        if (empty($group_id)) {
+            $data['inputerror'][] = 'group_id';
+            $data['error_string'][] = 'Group is required';
+            $data['status'] = FALSE;
+        }
+
+
 
         if ($data['status'] === FALSE) {
             echo json_encode($data);

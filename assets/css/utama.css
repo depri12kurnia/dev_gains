@@ -888,7 +888,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before {
     /* Hero */
     .hero-content {
         flex-direction: column;
-        text-align: center;
+        text-align: left;
     }
 
     .hero-actions {

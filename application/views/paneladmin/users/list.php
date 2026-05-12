@@ -53,12 +53,13 @@
                     <input type="hidden" value="" name="id" />
                     <div class="form-body">
                         <div class="form-group">
-                            <label class="control-label col-md-3">Username</label>
+                            <label class="control-label col-md-3">Email</label>
                             <div class="col-md-12">
-                                <input name="username" placeholder="Username" class="form-control" type="text">
+                                <input name="email" placeholder="Email" class="form-control" type="text">
                                 <span class="help-block"></span>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-3">Password</label>
                             <div class="col-md-12">
@@ -66,13 +67,7 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Email</label>
-                            <div class="col-md-12">
-                                <input name="email" placeholder="Email" class="form-control" type="text">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-3">First Name</label>
                             <div class="col-md-12">
@@ -80,13 +75,7 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Last Name</label>
-                            <div class="col-md-12">
-                                <input name="last_name" placeholder="Last Name" class="form-control" type="text">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-3">Group</label>
                             <div class="col-md-12">
@@ -179,10 +168,9 @@
             dataType: "JSON",
             success: function(data) {
                 $('[name="id"]').val(data.id);
-                $('[name="username"]').val(data.username);
                 $('[name="email"]').val(data.email);
+                $('[name="password"]').val(data.password);
                 $('[name="first_name"]').val(data.first_name);
-                $('[name="last_name"]').val(data.last_name);
                 $('[name="group_id"]').val(data.group_id);
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Edit User');

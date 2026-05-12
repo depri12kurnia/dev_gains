@@ -4,6 +4,7 @@
         <div class="row mb-4">
             <div class="col-md-12">
                 <h3 class="mb-3"><i class="fas fa-credit-card mr-2"></i> Payment Statistics</h3>
+                <button class="btn btn-primary btn-sm float-right" onclick="printDashboard()"><i class="fas fa-print"></i> Print Dashboard</button>
             </div>
 
             <div class="col-lg-3 col-6">
@@ -467,4 +468,41 @@
             }
         }
     });
+</script>
+
+<style media="print">
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+
+    body {
+        font-size: 12px;
+    }
+
+    .btn,
+    .card-header .btn,
+    .float-right {
+        display: none !important;
+    }
+
+    .card {
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+    }
+
+    .row {
+        page-break-inside: avoid;
+    }
+
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+</style>
+
+<script>
+    function printDashboard() {
+        window.print();
+    }
 </script>

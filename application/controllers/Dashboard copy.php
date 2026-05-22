@@ -78,10 +78,6 @@ class Dashboard extends CI_Controller
         $data['title']   = 'Dashboard | User Panel';
         $data['content'] = 'dashboard';
 
-        // Load user's existing submission (if any) so the Submission tab can pre-fill fields
-        $submission = $this->M_submission->get_by_user($user_id);
-        $data['submission'] = $submission;
-
         $this->load->view('layouts/userlte3', $data);
     }
 
@@ -148,26 +144,17 @@ class Dashboard extends CI_Controller
         $user_id = $this->session->userdata('user_id');
 
         $country = $this->input->post('country');
-        if ($country === 'Other') {
+        if ($country == 'Other') {
             $country = $this->input->post('other_country');
         }
 
         $data = [
-            'user_id'       => $user_id,
-            'team_leader'   => $this->input->post('team_leader'),
-            'leader_titles' => $this->input->post('leader_titles'),
-            'institution'   => $this->input->post('institution'),
-            'country'       => $country,
-            'partType'      => $this->input->post('partType'),
-            'crossCollab'   => $this->input->post('crossCollab'),
-            'team_members'  => $this->input->post('team_members'),
-            'category'      => $this->input->post('category'),
-            'title'         => $this->input->post('title'),
-            'focus_area'    => $this->input->post('focus_area'),
-            'alignment_theme' => $this->input->post('alignment_theme'),
-            'link'          => $this->input->post('link'),
-            'supporting_links' => $this->input->post('supporting_links'),
-            'consent' => $this->input->post('consent') ? 1 : 0,
+            'user_id'     => $user_id,
+            'institution' => $this->input->post('institution'),
+            'country'     => $country,
+            'category'    => $this->input->post('category'),
+            'title'       => $this->input->post('title'),
+            'link'        => $this->input->post('link')
         ];
 
         // CEK DATA SUDAH ADA ATAU BELUM

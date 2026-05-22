@@ -14,20 +14,20 @@
                 <ul style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.875rem;">
                     <li><a href="<?php echo base_url('about'); ?>">About GAINS</a></li>
                     <li><a href="<?php echo base_url('timeline'); ?>">Important Dates</a></li>
-                    <li><a href="<?php echo base_url('auth'); ?>">Register / Login</a></li>
+                    <li><a href="<?php echo base_url('auth/login'); ?>">Register / Login</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-lg mb-4" style="border-bottom:2px solid var(--primary); padding-bottom:0.5rem; display:inline-block; color:white;">Contact Us</h4>
                 <ul style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.875rem; color:var(--gray-400);">
                     <li class="flex items-start"><i data-lucide="map-pin" class="text-secondary mr-2" style="flex-shrink:0;"></i> Jl. Arteri JORR Jatiwarna, Bekasi, West Java, Indonesia</li>
-                    <li class="flex items-center"><i data-lucide="mail" class="text-secondary mr-2" style="flex-shrink:0;"></i> gains2026@poltekkesjakarta3.ac.id</li>
-                    <li class="flex items-center"><i data-lucide="phone" class="text-secondary mr-2" style="flex-shrink:0;"></i> +62 812-3456-7890 (Information Desk)</li>
+                    <li class="flex items-center"><i data-lucide="mail" class="text-secondary mr-2" style="flex-shrink:0;"></i> gains@poltekkesjakarta3.ac.id</li>
+                    <li class="flex items-center"><i data-lucide="phone" class="text-secondary mr-2" style="flex-shrink:0;"></i> (+62) 813 8878 933 (Contact Person)</li>
                 </ul>
             </div>
         </div>
         <div style="margin-top:3rem; padding-top:2rem; border-top:1px solid var(--gray-800); text-align:center; font-size:0.875rem; color:var(--gray-500);">
-            &copy; <span id="current-year"></span> Poltekkes Kemenkes Jakarta III. All rights reserved.
+            &copy; <span id="current-year"></span> Poltekkes Kemenkes Jakarta III. All rights reserved. | Page rendered in <strong>{elapsed_time}</strong> seconds.
         </div>
     </div>
 </footer>

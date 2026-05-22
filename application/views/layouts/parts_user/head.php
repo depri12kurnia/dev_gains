@@ -10,4 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
 
     <!-- Custom CSS5 (Modern CSS) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/depri12kurnia/dev_gains@dfe693cfce7b9e43de9454c9f3c6d849c0c13ae3/assets/css/utama.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/depri12kurnia/dev_gains@abd2e4a517f440b947e94755d298a028227e40ed/assets/css/utama.css"> -->
+    <link rel="stylesheet" href="<?= base_url('assets/css/utama.css') ?>">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

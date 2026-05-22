@@ -14,9 +14,7 @@
     ];
 
     $submission_status = $detail->submission_status ?? null;
-    // If controller provided a full `$submission` object (from M_submission), keep it.
-    // Otherwise, build a lightweight fallback from $detail (which contains limited fields).
-    $submission = $submission ?? (object) [
+    $submission = (object) [
         'status'      => $submission_status,
         'title'       => $detail->submission_title ?? '',
         'country'     => $detail->country ?? '',
@@ -254,19 +252,19 @@
                     <div style="display:flex; flex-direction:column; gap:1rem;">
                         <div>
                             <p style="font-size:0.875rem; opacity:0.8;">Registration Fee</p>
-                            <p class="text-3xl font-extrabold">IDR 250.000 <span style="font-size:1.125rem; font-weight:normal;">/ USD 15</span></p>
+                            <p class="text-3xl font-extrabold">IDR 750.000 <span style="font-size:1.125rem; font-weight:normal;">/ USD 50</span></p>
                         </div>
                         <div style="padding-top:1rem; border-top:1px solid rgba(255,255,255,0.2);">
                             <p style="font-size:0.875rem; opacity:0.8;">Bank Name</p>
-                            <p class="text-lg font-bold">BNI (Bank Negara Indonesia)</p>
+                            <p class="text-lg font-bold">Bank Mandiri</p>
                         </div>
                         <div>
                             <p style="font-size:0.875rem; opacity:0.8;">Account Number</p>
-                            <p class="text-xl font-bold" style="letter-spacing:0.05em;">1793324297</p>
+                            <p class="text-xl font-bold" style="letter-spacing:0.05em;">123-456-789-1011</p>
                         </div>
                         <div>
                             <p style="font-size:0.875rem; opacity:0.8;">Account Holder</p>
-                            <p class="text-lg font-bold">RPL 182 BLU POLTEKKES 3 UTK DK BNI</p>
+                            <p class="text-lg font-bold">Panitia GAINS Poltekkes Kemenkes JKT III</p>
                         </div>
                     </div>
                 </div>
@@ -653,6 +651,95 @@
                                 </h4>
                             </div>
                         </div>
+                        <br>
+                        <form method="post" action="<?= base_url('dashboard/save_submission'); ?>">
+                            <input type="hidden"
+                                name="<?= $this->security->get_csrf_token_name(); ?>"
+                                value="<?= $this->security->get_csrf_hash(); ?>">
+                            <div class="form-group">
+                                <label class="form-label">Institutional Affiliation <span class="text-primary">*</span></label>
+                                <input type="text" name="institution" value="<?= $s->institution ?? '' ?>" required class="form-control" placeholder="e.g. Poltekkes Kemenkes Jakarta III" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Country <span class="text-primary">*</span></label>
+                                <select onchange="handleCountryChange(this)" name="country" required class="form-control readonly-select">
+                                    <option value="" disabled <?= empty($s) ? 'selected' : '' ?>>Select your country...</option>
+                                    <?php
+                                    $countries = ["Indonesia", "Malaysia", "Singapore", "Thailand", "Philippines", "Australia", "Japan", "India", "United States", "United Kingdom"];
+                                    foreach ($countries as $c):
+                                    ?>
+                                        <option value="<?= $c ?>" <?= ($s && $s->country == $c) ? 'selected' : '' ?>>
+                                            <?= $c ?>
+                                        </option>
+                                    <?php endforeach; ?>
+
+                                    <option value="Other" <?= ($s && !in_array($s->country, $countries)) ? 'selected' : '' ?>>Other</option>
+                                </select>
+                            </div>
+
+                            <div id="other-country-container" class="form-group <?= ($s && !in_array($s->country, $countries)) ? '' : 'hidden' ?> animate-fadeIn">
+                                <label class="form-label">Please specify your country <span class="text-primary">*</span></label>
+                                <input type="text" id="other-country-input" value="<?= ($s && !in_array($s->country, $countries)) ? $s->country : '' ?>" name="other_country" class="form-control" placeholder="Enter your country name" />
+                            </div>
+
+                            <div class="form-group" style="padding-top:1.5rem; border-top:1px solid var(--gray-100); margin-top:1.5rem;">
+                                <label class="form-label mb-4">Select Competition Category <span class="text-primary">*</span></label>
+                                <div class="grid md-grid-2" style="gap:rem;">
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="IRPC" <?= ($s && $s->category == 'IRPC') ? 'checked' : '' ?> readonly />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">IRPC</span>
+                                            <span class="text-xs text-gray-500 mt-1">International Research Pitch</span>
+                                        </div>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
+                                    </label>
+
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="AHIC" <?= ($s && $s->category == 'AHIC') ? 'checked' : '' ?> readonly />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">AHIC</span>
+                                            <span class="text-xs text-gray-500 mt-1">Innovation Challenge</span>
+                                        </div>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="E2IPBC" <?= ($s && $s->category == 'E2IPBC') ? 'checked' : '' ?> readonly />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">E2IPBC</span>
+                                            <span class="text-xs text-gray-500 mt-1">Policy Brief</span>
+                                        </div>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-6">
+                                <label class="form-label">Submission Title <span class="text-primary">*</span></label>
+                                <input type="text" name="title" value="<?= $s->title ?? '' ?>" class="form-control" placeholder="Enter your research/innovation title" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Submission Link (Google Drive / Dropbox / YouTube) <span class="text-primary">*</span></label>
+                                <div style="background:var(--info-bg); border:1px solid var(--info-border); padding:1rem; border-radius:0.75rem; margin-bottom:1rem;">
+                                    <h4 class="text-sm flex items-center mb-2" style="color:var(--info-text);"><i data-lucide="info" style="width:1rem; margin-right:0.5rem;"></i> Upload Instructions & Criteria</h4>
+                                    <ul style="list-style-type:disc; padding-left:1.25rem; font-size:0.75rem; color:var(--info-text); display:flex; flex-direction:column; gap:0.25rem;">
+                                        <li>Create a single folder in your cloud storage (e.g., Google Drive) containing all your required submission files.</li>
+                                        <li><strong>Document Formats:</strong> PDF or DOCX format for Abstracts, Policy Briefs, or Innovation Descriptions.</li>
+                                        <li><strong>Video/Supporting Evidence (AHIC specifically):</strong> MP4 format or provide a YouTube link within your document (Max 5 minutes).</li>
+                                        <li><strong>Access Permission:</strong> Ensure your folder link access is set to <strong>"Anyone with the link can view"</strong>.</li>
+                                    </ul>
+                                </div>
+                                <div style="position:relative;">
+                                    <i data-lucide="globe" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-400);"></i>
+                                    <input type="url" name="link" value="<?= $s->link ?? '' ?>" required class="form-control" style="padding-left:2.5rem;" placeholder="https://drive.google.com/drive/folders/..." readonly />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-8">
+                                <button type="submit" class="btn btn-gradient text-lg"><?= $s ? 'Update Submission' : 'Save & Submit Document' ?></button>
+                            </div>
+                        </form>
                     <?php elseif ($submission_status == 'under review'): ?>
                         <div class="form-group">
                             <h3 class="text-yellow-700 font-bold text-lg">⏳ Submission Under Review</h3>
@@ -728,270 +815,99 @@
                             </div>
                         </div>
                     <?php else: ?>
-                        <?php if ($status === 'submitted'): ?>
+                        <?php if ($s): ?>
                             <div class="mb-4 text-success">
                                 ✔ You have submitted before. You can update your submission.
                             </div>
                         <?php endif; ?>
-                        <form method="post" action="<?= base_url('dashboard/save_submission'); ?>" enctype="multipart/form-data">
+                        <form method="post" action="<?= base_url('dashboard/save_submission'); ?>">
                             <input type="hidden"
                                 name="<?= $this->security->get_csrf_token_name(); ?>"
                                 value="<?= $this->security->get_csrf_hash(); ?>">
+                            <div class="form-group">
+                                <label class="form-label">Institutional Affiliation <span class="text-primary">*</span></label>
+                                <input type="text" name="institution" value="<?= $s->institution ?? '' ?>" required class="form-control" placeholder="e.g. Poltekkes Kemenkes Jakarta III" />
+                            </div>
 
-                            <!-- SECTION A: Participant Data -->
-                            <div class="form-section">
-                                <h4 class="form-section-title">
-                                    <i data-lucide="users-round"></i> Section A: Participant Data
-                                </h4>
+                            <div class="form-group">
+                                <label class="form-label">Country <span class="text-primary">*</span></label>
+                                <select onchange="handleCountryChange(this)" name="country" required class="form-control">
+                                    <option value="" disabled <?= empty($s) ? 'selected' : '' ?>>Select your country...</option>
+                                    <?php
+                                    $countries = ["Indonesia", "Malaysia", "Singapore", "Thailand", "Philippines", "Australia", "Japan", "India", "United States", "United Kingdom"];
+                                    foreach ($countries as $c):
+                                    ?>
+                                        <option value="<?= $c ?>" <?= ($s && $s->country == $c) ? 'selected' : '' ?>>
+                                            <?= $c ?>
+                                        </option>
+                                    <?php endforeach; ?>
 
-                                <div class="grid-2">
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary">Team Leader (Full Name) <span class="text-danger">*</span></label>
-                                        <input type="text" name="team_leader" value="<?= $s->team_leader ?? '' ?>" class="form-control" placeholder="e.g. Jane Doe" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary">Academic/Professional Titles <span class="text-danger">*</span></label>
-                                        <input type="text" name="leader_titles" value="<?= $s->leader_titles ?? '' ?>" class="form-control" placeholder="e.g. Dr., M.Sc." required>
-                                    </div>
-                                </div>
+                                    <option value="Other" <?= ($s && !in_array($s->country, $countries)) ? 'selected' : '' ?>>Other</option>
+                                </select>
+                            </div>
 
-                                <div class="grid-2">
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary">Institutional Affiliation <span class="text-danger">*</span></label>
-                                        <input type="text" name="institution" value="<?= $s->institution ?? '' ?>" class="form-control" placeholder="e.g. Poltekkes Kemenkes Jakarta III" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary">Country <span class="text-danger">*</span></label>
-                                        <select id="countrySelect" name="country" class="form-select" required>
-                                            <option value="" disabled <?= empty($s->country ?? '') ? 'selected' : '' ?>>Select your country...</option>
-                                            <?php
-                                            $countries = ["Indonesia", "Malaysia", "Singapore", "Thailand", "Philippines", "Australia", "Japan", "India", "United States", "United Kingdom"];
-                                            foreach ($countries as $c):
-                                            ?>
-                                                <option value="<?= $c ?>" <?= (($s->country ?? '') === $c) ? 'selected' : '' ?>><?= $c ?></option>
-                                            <?php endforeach; ?>
-                                            <option value="Other" <?= (($s->country ?? '') && !in_array($s->country ?? '', $countries)) ? 'selected' : '' ?>>Other</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div id="other-country-container" class="form-group <?= ($s && !in_array($s->country, $countries)) ? '' : 'hidden' ?> animate-fadeIn">
+                                <label class="form-label">Please specify your country <span class="text-primary">*</span></label>
+                                <input type="text" id="other-country-input" value="<?= ($s && !in_array($s->country, $countries)) ? $s->country : '' ?>" name="other_country" class="form-control" placeholder="Enter your country name" />
+                            </div>
 
-                                <div id="otherCountryDiv" class="mb-4 <?= (($s->country ?? '') && !in_array($s->country ?? '', $countries)) ? '' : 'd-none-custom' ?>">
-                                    <label class="form-label fw-medium text-secondary">Please specify your country <span class="text-danger">*</span></label>
-                                    <input type="text" id="otherCountryInput" name="other_country" value="<?= (($s->country ?? '') && !in_array($s->country ?? '', $countries)) ? $s->country : '' ?>" class="form-control" placeholder="Enter your country name">
-                                </div>
-
-                                <div class="grid-2">
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary mb-2">Participation Type <span class="text-danger">*</span></label>
-                                        <div class="d-flex gap-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="partType" id="typeIndividual" value="Individual" <?= (($s->partType ?? 'Individual') === 'Individual') ? 'checked' : '' ?> required>
-                                                <label class="form-check-label" for="typeIndividual">Individual</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="partType" id="typeTeam" value="Team" <?= (($s->partType ?? '') === 'Team') ? 'checked' : '' ?> required>
-                                                <label class="form-check-label" for="typeTeam">Team (Max 3)</label>
-                                            </div>
+                            <div class="form-group" style="padding-top:1.5rem; border-top:1px solid var(--gray-100); margin-top:1.5rem;">
+                                <label class="form-label mb-4">Select Competition Category <span class="text-primary">*</span></label>
+                                <div class="grid md-grid-2" style="gap:rem;">
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="IRPC" <?= ($s && $s->category == 'IRPC') ? 'checked' : '' ?> />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">IRPC</span>
+                                            <span class="text-xs text-gray-500 mt-1">International Research Pitch</span>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label fw-medium text-secondary mb-2">Cross-institutional/country collaboration? <span class="text-danger">*</span></label>
-                                        <div class="d-flex gap-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="crossCollab" id="collabYes" value="Yes" <?= (($s->crossCollab ?? '') === 'Yes') ? 'checked' : '' ?> required>
-                                                <label class="form-check-label" for="collabYes">Yes</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="crossCollab" id="collabNo" value="No" <?= (($s->crossCollab ?? '') === 'No') ? 'checked' : '' ?> required>
-                                                <label class="form-check-label" for="collabNo">No</label>
-                                            </div>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
+                                    </label>
+
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="AHIC" <?= ($s && $s->category == 'AHIC') ? 'checked' : '' ?> />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">AHIC</span>
+                                            <span class="text-xs text-gray-500 mt-1">Innovation Challenge</span>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div id="teamMembersDiv" class="p-3 bg-light rounded-3 border <?= (($s->partType ?? '') === 'Team') ? '' : 'd-none-custom' ?>">
-                                    <label class="form-label fw-medium text-secondary">Names and Affiliations of Team Members</label>
-                                    <textarea id="teamMembersInput" name="team_members" rows="3" class="form-control" placeholder="1. Name, Title - Affiliation&#10;2. Name, Title - Affiliation"><?= $s->team_members ?? '' ?></textarea>
-                                </div>
-                            </div>
-
-                            <!-- SECTION B: Main Competition -->
-                            <div class="form-section">
-                                <h4 class="form-section-title">
-                                    <i data-lucide="award"></i> Section B: Main Competition
-                                </h4>
-
-                                <label class=" form-label fw-medium text-secondary mb-3">Select Competition Category <span class="text-danger">*</span></label>
-                                <div class="radio-card-grid">
-                                    <div class="form-group">
-                                        <input type="radio" name="category" id="catIRPC" value="IRPC" class="radio-card-input" <?= (($s->category ?? '') === 'IRPC') ? 'checked' : '' ?> required>
-                                        <label for="catIRPC" class="radio-card-label w-100">
-                                            <div class="flex-grow-1">
-                                                <span class="d-block fw-bold text-dark">IRPC</span>
-                                                <span class="d-block small text-muted mt-1">International Research Pitch</span>
-                                            </div>
-                                            <i class="bi bi-check-circle-fill fs-5 text-primary-custom check-icon d-none"></i>
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="radio" name="category" id="catAHIC" value="AHIC" class="radio-card-input" <?= (($s->category ?? '') === 'AHIC') ? 'checked' : '' ?> required>
-                                        <label for="catAHIC" class="radio-card-label w-100">
-                                            <div class="flex-grow-1">
-                                                <span class="d-block fw-bold text-dark">AHIC</span>
-                                                <span class="d-block small text-muted mt-1">Innovation Challenge</span>
-                                            </div>
-                                            <i class="bi bi-check-circle-fill fs-5 text-primary-custom check-icon d-none"></i>
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="radio" name="category" id="catE2IPBC" value="E2IPBC" class="radio-card-input" <?= (($s->category ?? '') === 'E2IPBC') ? 'checked' : '' ?> required>
-                                        <label for="catE2IPBC" class="radio-card-label w-100">
-                                            <div class="flex-grow-1">
-                                                <span class="d-block fw-bold text-dark">E2IPBC</span>
-                                                <span class="d-block small text-muted mt-1">Policy Brief</span>
-                                            </div>
-                                            <i class="bi bi-check-circle-fill fs-5 text-primary-custom check-icon d-none"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- SECTION C: Submission Information -->
-                            <div class="form-section">
-                                <h4 class="form-section-title">
-                                    <i data-lucide="file-text"></i> Section C: Submission Information
-                                </h4>
-
-                                <div class=" mb-4">
-                                    <label class="form-label fw-medium text-secondary">Submission Title <span class="text-danger">*</span></label>
-                                    <input type="text" name="title" value="<?= $s->title ?? '' ?>" class="form-control py-2 rounded-3" placeholder="Enter your full research or innovation title" required>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-medium text-secondary">Focus Area <span class="text-danger">*</span></label>
-                                    <select name="focus_area" class="form-select py-2 rounded-3" required>
-                                        <option value="" disabled <?= empty($s->focus_area ?? '') ? 'selected' : '' ?>>Select focus area...</option>
-                                        <?php
-                                        $focusAreas = ["NCDs", "Women's Health", "NCDs and Women's Health", "Health Education", "Healthcare Services", "Health Policy", "Other"];
-                                        foreach ($focusAreas as $area):
-                                        ?>
-                                            <option value="<?= $area ?>" <?= (($s->focus_area ?? '') === $area) ? 'selected' : '' ?>><?= $area ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-medium text-secondary">Alignment of the work with the GAINS 2026 theme <span class="text-danger">*</span></label>
-                                    <textarea name="alignment_theme" rows="3" class="form-control py-2 rounded-3" placeholder="Briefly describe how your submission aligns with the main theme..." required><?= $s->alignment_theme ?? '' ?></textarea>
-                                </div>
-                            </div>
-
-                            <!-- SECTION D: File Upload -->
-                            <div class="form-section">
-                                <h4 class="form-section-title">
-                                    <i data-lucide=" shield-check"></i> Section D: Link Upload
-                                </h4>
-                                <label class="form-label">Main Document (Google Drive / Dropbox)<span class="text-primary">*</span></label>
-                                <div style="position:relative;">
-                                    <i data-lucide="globe" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-400);"></i>
-                                    <input type="url" name="link" value="<?= $s->link ?? '' ?>" required class="form-control" style="padding-left:2.5rem;" placeholder="Example : https://drive.google.com/drive/folders/..." />
-                                </div>
-                                </br>
-                                <label class="form-label">Supporting Documents (Google Drive / Dropbox / YouTube) Additional</label>
-                                <div style="position:relative;">
-                                    <i data-lucide="globe" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-400);"></i>
-                                    <input type="url" name="supporting_links" value="<?= $s->supporting_links ?? '' ?>" class="form-control" style="padding-left:2.5rem;" placeholder="Example: https://drive.google.com/drive/folders/..." />
-                                </div>
-                            </div>
-                            <!-- SECTION E: Participant Consent & Declaration -->
-                            <div class="form-section">
-                                <h4 class="form-section-title">
-                                    <i data-lucide="shield-check"></i> Section E: Participant Consent & Declaration
-                                </h4>
-
-                                <div class="consent-box">
-                                    <p>By submitting this form, you agree to the declaration statement regarding originality,
-                                        academic ethics, and compliance with the committee's regulation:</p>
-
-                                    <ul class="consent-list">
-                                        <li><strong>Originality of Work:</strong> The submitted work is an original creation
-                                            and/or
-                                            the collective work of the designated team members.</li>
-                                        <li><strong>Academic Integrity & Copyright:</strong> The work does not infringe upon any
-                                            third-party copyright, intellectual property rights, or breach established academic
-                                            ethical standards.</li>
-                                        <li><strong>Compliance with Rules:</strong> I/We agree to strictly abide by all the
-                                            guidelines, rules, regulations, and provisions established by the GAINS 2026
-                                            organizing
-                                            committee.</li>
-                                        <li><strong>Communication Consent:</strong> I/We agree to be contacted by the organizing
-                                            committee via the official email address and contact details provided in the
-                                            registration
-                                            form.</li>
-                                        <li><strong>Finality of Decisions:</strong> I/We fully understand and acknowledge that
-                                            the
-                                            decisions made by the reviewer panel are final, binding, and not subject to appeal.
-                                        </li>
-                                    </ul>
-
-                                    <label class="consent-checkbox">
-                                        <input type="checkbox" name="consent" required <?= ($s->consent ?? 0) ? 'checked' : '' ?>>
-                                        <span class="consent-label">
-                                            I/We have read, fully understand, and agree to the Participant Consent and
-                                            Declaration statement above.
-                                            <span class="text-danger">*</span>
-                                        </span>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="category" value="E2IPBC" <?= ($s && $s->category == 'E2IPBC') ? 'checked' : '' ?> />
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold">E2IPBC</span>
+                                            <span class="text-xs text-gray-500 mt-1">Policy Brief</span>
+                                        </div>
+                                        <i data-lucide="check-circle" class="check-icon"></i>
                                     </label>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-end mt-8">
-                                <button type="submit" class="btn btn-gradient text-lg"><?= $status === 'submitted' ? 'Update Submission' : 'Save & Submit Registration' ?></button>
+
+                            <div class="form-group mt-6">
+                                <label class="form-label">Submission Title <span class="text-primary">*</span></label>
+                                <input type="text" name="title" value="<?= $s->title ?? '' ?>" class="form-control" placeholder="Enter your research/innovation title" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Submission Link (Google Drive / Dropbox / YouTube) <span class="text-primary">*</span></label>
+                                <div style="background:var(--info-bg); border:1px solid var(--info-border); padding:1rem; border-radius:0.75rem; margin-bottom:1rem;">
+                                    <h4 class="text-sm flex items-center mb-2" style="color:var(--info-text);"><i data-lucide="info" style="width:1rem; margin-right:0.5rem;"></i> Upload Instructions & Criteria</h4>
+                                    <ul style="list-style-type:disc; padding-left:1.25rem; font-size:0.75rem; color:var(--info-text); display:flex; flex-direction:column; gap:0.25rem;">
+                                        <li>Create a single folder in your cloud storage (e.g., Google Drive) containing all your required submission files.</li>
+                                        <li><strong>Document Formats:</strong> PDF or DOCX format for Abstracts, Policy Briefs, or Innovation Descriptions.</li>
+                                        <li><strong>Video/Supporting Evidence (AHIC specifically):</strong> MP4 format or provide a YouTube link within your document (Max 5 minutes).</li>
+                                        <li><strong>Access Permission:</strong> Ensure your folder link access is set to <strong>"Anyone with the link can view"</strong>.</li>
+                                    </ul>
+                                </div>
+                                <div style="position:relative;">
+                                    <i data-lucide="globe" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-400);"></i>
+                                    <input type="url" name="link" value="<?= $s->link ?? '' ?>" required class="form-control" style="padding-left:2.5rem;" placeholder="https://drive.google.com/drive/folders/..." />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-8">
+                                <button type="submit" class="btn btn-gradient text-lg"><?= $s ? 'Update Submission' : 'Save & Submit Document' ?></button>
                             </div>
                         </form>
-
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const countrySelect = document.getElementById('countrySelect');
-                                const otherCountryDiv = document.getElementById('otherCountryDiv');
-                                const otherCountryInput = document.getElementById('otherCountryInput');
-                                const teamRadios = document.querySelectorAll('input[name="partType"]');
-                                const teamMembersDiv = document.getElementById('teamMembersDiv');
-                                const teamMembersInput = document.getElementById('teamMembersInput');
-                                const categoryRadios = document.querySelectorAll('input[name="category"]');
-
-                                function updateCountry() {
-                                    if (!countrySelect) return;
-                                    if (countrySelect.value === 'Other') {
-                                        otherCountryDiv.classList.remove('d-none-custom');
-                                        otherCountryInput.required = true;
-                                    } else {
-                                        otherCountryDiv.classList.add('d-none-custom');
-                                        otherCountryInput.required = false;
-                                    }
-                                }
-
-                                function updateTeamMembers() {
-                                    const selected = Array.from(teamRadios).find(r => r.checked);
-                                    if (selected && selected.value === 'Team') {
-                                        teamMembersDiv.classList.remove('d-none-custom');
-                                        teamMembersInput.required = true;
-                                    } else {
-                                        teamMembersDiv.classList.add('d-none-custom');
-                                        teamMembersInput.required = false;
-                                    }
-                                }
-
-                                if (countrySelect) {
-                                    countrySelect.addEventListener('change', updateCountry);
-                                    updateCountry();
-                                }
-
-                                teamRadios.forEach(radio => radio.addEventListener('change', updateTeamMembers));
-
-                                updateTeamMembers();
-                            });
-                        </script>
                     <?php endif; ?>
                 </div>
             </div>

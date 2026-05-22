@@ -10,19 +10,43 @@
       </div>
 
       <div class="p-8">
-        <?php if (validation_errors()) : ?>
-          <div class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <?php echo validation_errors(); ?>
-          </div>
-        <?php endif; ?>
+        <!-- Script untuk SweetAlert2 -->
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
 
-        <?php if ($this->session->flashdata('message')) : ?>
-          <div class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <?php echo $this->session->flashdata('message'); ?>
-          </div>
-        <?php endif; ?>
+            // 1. Alert untuk Validation Errors (CodeIgniter)
+            <?php if (validation_errors()) : ?>
+              Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: '<?php echo str_replace(["\r", "\n"], '', validation_errors()); ?>',
+                confirmButtonColor: '#3085d6',
+              });
+            <?php endif; ?>
+
+            // 2. Alert untuk Flashdata Message
+            <?php if ($this->session->flashdata('message')) : ?>
+              Swal.fire({
+                icon: 'warning',
+                title: 'Attention',
+                text: '<?php echo $this->session->flashdata('message'); ?>',
+                confirmButtonColor: '#3085d6',
+              });
+            <?php endif; ?>
+
+            // 3. Tambahan: Alert untuk Flashdata Success (Opsional tapi sering dipakai)
+            <?php if ($this->session->flashdata('success')) : ?>
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '<?php echo $this->session->flashdata('success'); ?>',
+                timer: 3000,
+                showConfirmButton: false
+              });
+            <?php endif; ?>
+
+          });
+        </script>
         <?php echo form_open("auth/login"); ?>
         <div class="form-group">
           <label class="form-label">Email Address</label>

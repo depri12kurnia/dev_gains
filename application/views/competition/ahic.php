@@ -76,9 +76,11 @@
                     <i data-lucide="file-text" class="mb-4" style="width:3rem; height:3rem; margin:0 auto 1rem; color: var(--secondary);"></i>
                     <h3 class="text-xl mb-2">Participant Guidelines</h3>
                     <p class="text-gray-400 text-sm mb-6">Download the comprehensive rulebook covering all categories, general evaluation criteria, and formatting rules.</p>
-                    <button class="btn btn-gradient w-full">
-                        <i data-lucide="download" style="margin-right:0.5rem; width:1.25rem;"></i> Download Guideline
-                    </button>
+                    <a href="<?php echo base_url('public/uploads/open/Guidelines_GAINS_2026_v3.pdf'); ?>" target="_blank" rel="noopener noreferrer">
+                        <button class="btn btn-gradient w-full">
+                            <i data-lucide="download" style="margin-right:0.5rem; width:1.25rem;"></i> Download Guideline
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>

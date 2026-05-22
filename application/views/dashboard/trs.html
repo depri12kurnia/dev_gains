@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Font & Core Reset */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #00A599;
+            --primary-light: rgba(0, 165, 153, 0.1);
+            --primary-hover: #00877d;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --focus-ring: rgba(0, 165, 153, 0.25);
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding: 3rem 1rem;
+        }
+
+        /* Container & Grid System */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-section {
+            padding: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-section-title i {
+            color: var(--primary-color);
+            stroke-width: 2.25px;
+        }
+
+        /* Layout Grid Helpers */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 1.75rem;
+            }
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+
+        /* Form Fields Styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .text-danger {
+            color: var(--danger-color);
+        }
+
+        .form-control,
+        .form-select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text-dark);
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-control::placeholder,
+        textarea::placeholder {
+            color: #a0aec0;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.15em;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        /* Radios and Checkboxes Layout */
+        .flex-gap-4 {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .form-check-input {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            /* Rounded radio option */
+            outline: none;
+            background-color: #ffffff;
+            cursor: pointer;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .form-check-input:checked {
+            border-color: var(--primary-color);
+        }
+
+        .form-check-input::before {
+            content: "";
+            width: 0.65rem;
+            height: 0.65rem;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 0.15s transform ease-in-out;
+            background-color: var(--primary-color);
+        }
+
+        .form-check-input:checked::before {
+            transform: scale(1);
+        }
+
+        /* Radio Cards Styling (Section B) */
+        .radio-card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .radio-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .radio-card-input {
+            display: none;
+        }
+
+        .radio-card-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background: #ffffff;
+            height: 100%;
+        }
+
+        .radio-card-label:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 165, 153, 0.02);
+        }
+
+        .radio-card-input:checked+.radio-card-label {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color), 0 4px 12px rgba(0, 165, 153, 0.08);
+            background-color: rgba(0, 165, 153, 0.01);
+        }
+
+        .radio-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .radio-card-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .radio-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Check Icon */
+        .check-icon {
+            display: none;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .radio-card-input:checked+.radio-card-label .check-icon {
+            display: block;
+        }
+
+        /* Dynamic Field Styling */
+        .bg-light-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+        }
+
+        .consent-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 1rem;
+        }
+
+        .consent-box p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .consent-list {
+            list-style-type: decimal;
+            padding-left: 1.25rem;
+            margin-bottom: 1.25rem;
+            color: #475569;
+            line-height: 1.65;
+        }
+
+        .consent-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .consent-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            cursor: pointer;
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.2s ease;
+        }
+
+        .consent-checkbox:hover {
+            border-color: var(--primary-color);
+        }
+
+        .consent-checkbox input {
+            margin-top: 0.3rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary-color);
+        }
+
+        .consent-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .d-none-custom {
+            display: none;
+        }
+
+        /* Input Groups with Icons */
+        .input-group {
+            display: flex;
+            position: relative;
+        }
+
+        .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            background-color: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .input-group-text i {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        .input-group .form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        /* File Upload Areas */
+        .upload-container {
+            border: 2px dashed var(--border-color);
+            background-color: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 165, 153, 0.01);
+        }
+
+        .upload-container-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-container-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .upload-container input[type="file"] {
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .upload-or-divider {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 1.25rem 0;
+            position: relative;
+        }
+
+        /* Gradient Button & Footer */
+        .form-footer {
+            padding: 1.75rem 2.5rem;
+            background-color: #f8fafc;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            .form-footer {
+                padding: 1.5rem 1.75rem;
+            }
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #00A599 0%, #7DC789 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            padding: 0.85rem 2.25rem;
+            border-radius: 0.65rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 165, 153, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 165, 153, 0.3);
+        }
+
+        .btn-gradient:active {
+            transform: translateY(0);
+        }
+
+        /* Custom Modal CSS (Without Bootstrap Dependency) */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .custom-modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .custom-modal-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            max-width: 420px;
+            width: 90%;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-modal-overlay.show .custom-modal-card {
+            transform: scale(1);
+        }
+
+        .custom-modal-icon {
+            width: 64px;
+            height: 64px;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .custom-modal-icon i {
+            width: 2rem;
+            height: 2rem;
+            stroke-width: 2.5px;
+        }
+
+        .custom-modal-card h4 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-modal-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.75rem;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+            <form id="registrationForm" onsubmit="handleSubmit(event)">
+                <!-- SECTION A: Participant Data -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i data-lucide="users"></i> Section A: Participant Data
+                    </h4>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Team Leader (Full Name) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="e.g. Jane Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Academic/Professional Titles <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="e.g. Dr., M.Sc." required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Institutional Affiliation <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="e.g. Poltekkes Kemenkes Jakarta III"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country <span class="text-danger">*</span></label>
+                            <select id="countrySelect" class="form-select" required>
+                                <option value="" disabled selected>Select your country...</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Thailand">Thailand</option>
+                                <option value="Philippines">Philippines</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Japan">Japan</option>
+                                <option value="India">India</option>
+                                <option value="United States">United States</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Other Country Field -->
+                    <div id="otherCountryDiv" class="mb-4 d-none-custom">
+                        <div class="form-group">
+                            <label class="form-label">Please specify your country <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="otherCountryInput" class="form-control"
+                                placeholder="Enter your country name">
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Participation Type <span class="text-danger">*</span></label>
+                            <div class="flex-gap-4">
+                                <label class="form-check">
+                                    <input class="form-check-input" type="radio" name="partType" id="typeIndividual"
+                                        value="Individual" checked>
+                                    <span>Individual</span>
+                                </label>
+                                <label class="form-check">
+                                    <input class="form-check-input" type="radio" name="partType" id="typeTeam"
+                                        value="Team">
+                                    <span>Team (Max 3)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cross-institutional/country collaboration? <span
+                                    class="text-danger">*</span></label>
+                            <div class="flex-gap-4">
+                                <label class="form-check">
+                                    <input class="form-check-input" type="radio" name="crossCollab" id="collabYes"
+                                        value="Yes" required>
+                                    <span>Yes</span>
+                                </label>
+                                <label class="form-check">
+                                    <input class="form-check-input" type="radio" name="crossCollab" id="collabNo"
+                                        value="No">
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Team Members Field -->
+                    <div id="teamMembersDiv" class="bg-light-box d-none-custom">
+                        <div class="form-group">
+                            <label class="form-label">Names and Affiliations of Team Members</label>
+                            <textarea id="teamMembersInput" rows="3"
+                                placeholder="1. Name, Title - Affiliation&#10;2. Name, Title - Affiliation"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION B: Main Competition -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i data-lucide="award"></i> Section B: Main Competition
+                    </h4>
+
+                    <div class="form-group">
+                        <label class="form-label mb-4">Select Competition Category <span
+                                class="text-danger">*</span></label>
+                        <div class="radio-card-grid">
+                            <div>
+                                <input type="radio" name="category" id="catIRPC" value="IRPC" class="radio-card-input"
+                                    required>
+                                <label for="catIRPC" class="radio-card-label">
+                                    <div class="radio-card-content">
+                                        <span class="radio-card-title">IRPC</span>
+                                        <span class="radio-card-desc">International Research Pitch</span>
+                                    </div>
+                                    <i data-lucide="check-circle" class="check-icon"></i>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" name="category" id="catAHIC" value="AHIC" class="radio-card-input"
+                                    required>
+                                <label for="catAHIC" class="radio-card-label">
+                                    <div class="radio-card-content">
+                                        <span class="radio-card-title">AHIC</span>
+                                        <span class="radio-card-desc">Innovation Challenge</span>
+                                    </div>
+                                    <i data-lucide="check-circle" class="check-icon"></i>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" name="category" id="catE2IPBC" value="E2IPBC"
+                                    class="radio-card-input" required>
+                                <label for="catE2IPBC" class="radio-card-label">
+                                    <div class="radio-card-content">
+                                        <span class="radio-card-title">E2IPBC</span>
+                                        <span class="radio-card-desc">Policy Brief</span>
+                                    </div>
+                                    <i data-lucide="check-circle" class="check-icon"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION C: Submission Information -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i data-lucide="file-text"></i> Section C: Submission Information
+                    </h4>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Submission Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control"
+                            placeholder="Enter your full research or innovation title" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Focus Area <span class="text-danger">*</span></label>
+                        <select class="form-select" required>
+                            <option value="" disabled selected>Select focus area...</option>
+                            <option value="NCDs">NCDs</option>
+                            <option value="Women's Health">Women's Health</option>
+                            <option value="NCDs and Women's Health">NCDs and Women's Health</option>
+                            <option value="Health Education">Health Education</option>
+                            <option value="Healthcare Services">Healthcare Services</option>
+                            <option value="Health Policy">Health Policy</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Alignment of the work with the GAINS 2026 theme <span
+                                class="text-danger">*</span></label>
+                        <textarea rows="3"
+                            placeholder="Briefly describe how your submission aligns with the main theme..."
+                            required></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION D: File Upload -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i data-lucide="cloud-upload"></i> Section D: File Upload
+                    </h4>
+
+                    <!-- Main Document -->
+                    <div class="form-group mb-4">
+                        <div class="upload-container">
+                            <h5 class="upload-container-title">Main Document <span class="text-danger">*</span></h5>
+                            <p class="upload-container-desc">Upload your main document according to the chosen category
+                                guidelines (PDF/DOCX).</p>
+                            <input type="file" required>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic IRPC Video Pitch -->
+                    <div id="irpcVideoDiv" class="mb-4 d-none-custom">
+                        <div class="upload-container"
+                            style="background-color: var(--primary-light); border-color: rgba(0,165,153,0.3);">
+                            <h5 class="upload-container-title" style="color: var(--primary-color);">IRPC Video Pitch
+                                <span class="text-danger">*</span>
+                            </h5>
+                            <p class="upload-container-desc">Upload your video pitch (MP4) OR provide an accessible
+                                video link (e.g. YouTube/Drive).</p>
+
+                            <input type="file" accept="video/mp4" class="mb-4">
+                            <div class="upload-or-divider">— OR —</div>
+                            <div class="input-group">
+                                <span class="input-group-text"><i data-lucide="link"></i></span>
+                                <input type="url" class="form-control" placeholder="https://youtube.com/...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Supporting Documents -->
+                    <div class="form-group mb-4">
+                        <div class="upload-container">
+                            <h5 class="upload-container-title">Supporting Documents <span
+                                    class="text-muted">(Optional)</span></h5>
+                            <p class="upload-container-desc">Upload any supporting materials such as pilot results or
+                                supplementary data.</p>
+                            <input type="file" multiple>
+                        </div>
+                    </div>
+
+                    <!-- Additional Links -->
+                    <div class="form-group">
+                        <label class="form-label">Additional Documentation Links <span
+                                class="text-muted">(Optional)</span></label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i data-lucide="link"></i></span>
+                            <input type="url" class="form-control"
+                                placeholder="Provide link to additional drive folder, video, etc.">
+                        </div>
+                    </div>
+
+                    <!-- SECTION E: Participant Consent & Declaration -->
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i data-lucide="shield-check"></i> Section E: Participant Consent & Declaration
+                        </h4>
+
+                        <div class="consent-box">
+                            <p>By submitting this form, you agree to the declaration statement regarding originality,
+                                academic ethics, and compliance with the committee's regulation:</p>
+
+                            <ul class="consent-list">
+                                <li><strong>Originality of Work:</strong> The submitted work is an original creation
+                                    and/or
+                                    the collective work of the designated team members.</li>
+                                <li><strong>Academic Integrity & Copyright:</strong> The work does not infringe upon any
+                                    third-party copyright, intellectual property rights, or breach established academic
+                                    ethical standards.</li>
+                                <li><strong>Compliance with Rules:</strong> I/We agree to strictly abide by all the
+                                    guidelines, rules, regulations, and provisions established by the GAINS 2026
+                                    organizing
+                                    committee.</li>
+                                <li><strong>Communication Consent:</strong> I/We agree to be contacted by the organizing
+                                    committee via the official email address and contact details provided in the
+                                    registration
+                                    form.</li>
+                                <li><strong>Finality of Decisions:</strong> I/We fully understand and acknowledge that
+                                    the
+                                    decisions made by the reviewer panel are final, binding, and not subject to appeal.
+                                </li>
+                            </ul>
+
+                            <label class="consent-checkbox">
+                                <input type="checkbox" required>
+                                <span class="consent-label">
+                                    I/We have read, fully understand, and agree to the Participant Consent and
+                                    Declaration statement above.
+                                    <span class="text-danger">*</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer / Submit Button -->
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-gradient">
+                        Save & Submit Registration
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Success Modal -->
+    <div id="customSuccessModal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="custom-modal-icon">
+                <i data-lucide="check"></i>
+            </div>
+            <h4>Submission Successful!</h4>
+            <p>Your registration details have been saved and submitted successfully to GAINS 2026.</p>
+            <button onclick="closeSuccessModal()" class="btn btn-gradient w-100">Close</button>
+        </div>
+    </div>
+
+    <!-- Form Logic Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Handle form submission using custom modal
+        function handleSubmit(event) {
+            event.preventDefault();
+            const modal = document.getElementById('customSuccessModal');
+            modal.classList.add('show');
+        }
+
+        // Close the success modal
+        function closeSuccessModal() {
+            const modal = document.getElementById('customSuccessModal');
+            modal.classList.remove('show');
+        }
+
+        // Toggle "Other Country" input
+        document.getElementById('countrySelect').addEventListener('change', function (e) {
+            const otherDiv = document.getElementById('otherCountryDiv');
+            const otherInput = document.getElementById('otherCountryInput');
+            if (e.target.value === 'Other') {
+                otherDiv.classList.remove('d-none-custom');
+                otherInput.required = true;
+            } else {
+                otherDiv.classList.add('d-none-custom');
+                otherInput.required = false;
+            }
+        });
+
+        // Toggle "Team Members" textarea
+        document.querySelectorAll('input[name="partType"]').forEach(radio => {
+            radio.addEventListener('change', function (e) {
+                const teamDiv = document.getElementById('teamMembersDiv');
+                const teamInput = document.getElementById('teamMembersInput');
+                if (e.target.value === 'Team') {
+                    teamDiv.classList.remove('d-none-custom');
+                    teamInput.required = true;
+                } else {
+                    teamDiv.classList.add('d-none-custom');
+                    teamInput.required = false;
+                }
+            });
+        });
+
+        // Toggle "IRPC Video Pitch" upload section
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', function (e) {
+                const videoDiv = document.getElementById('irpcVideoDiv');
+                if (e.target.value === 'IRPC') {
+                    videoDiv.classList.remove('d-none-custom');
+                } else {
+                    videoDiv.classList.add('d-none-custom');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

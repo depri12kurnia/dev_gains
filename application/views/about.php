@@ -9,11 +9,7 @@
         <div class="grid lg-grid-12 items-start">
             <div class="lg-col-4">
                 <div class="bg-white rounded-2xl shadow-lg border p-6 text-center" style="position: sticky; top: 6rem; min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <div style="border: 2px dashed var(--gray-300); width: 100%; height: 100%; border-radius: 1rem; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i data-lucide="image" class="text-gray-300 mb-4" style="width: 4rem; height: 4rem;"></i>
-                        <h3 class="text-xl text-gray-500 mb-2">Event Poster</h3>
-                        <p class="text-sm text-gray-400">Portrait Area (A4 or 4:5 ratio)</p>
-                    </div>
+                    <img src="<?= base_url('public/uploads/open/Poster_GAINS_2026.jpeg'); ?>" style="max-width:100%; border-radius:1px;align:justify;">
                 </div>
             </div>
 

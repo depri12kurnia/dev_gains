@@ -14,7 +14,7 @@ class Auth extends CI_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->load->library(['ion_auth', 'form_validation']);
-		$this->load->helper(['url', 'language']);
+		$this->load->helper(['url', 'language', 'captcha', 'string']);
 		$this->load->model('M_log_user');
 		$this->load->model('M_settings');
 
@@ -62,10 +62,23 @@ class Auth extends CI_Controller
 	public function login()
 	{
 		$this->data['title'] = $this->lang->line('login_heading');
+		// --- AWAL INTEGRASI GOOGLE ---
+		$this->load->config('google');
+		$client = new Google_Client();
+		$client->setClientId($this->config->item('client_id', 'google'));
+		$client->setClientSecret($this->config->item('client_secret', 'google'));
+		$client->setRedirectUri($this->config->item('redirect_uri', 'google'));
+		$client->addScope("email");
+		$client->addScope("profile");
 
+		// Kirim URL login Google ke view
+		$this->data['google_login_url'] = $client->createAuthUrl();
+		// --- AKHIR INTEGRASI GOOGLE ---
 		// validate form input
 		$this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'required');
 		$this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required');
+		// Tambahkan aturan validasi untuk CAPTCHA menggunakan callback
+		$this->form_validation->set_rules('captcha', 'Captcha', 'required|callback_check_captcha');
 
 		if ($this->form_validation->run() === TRUE) {
 			// check to see if the user is logging in
@@ -90,9 +103,9 @@ class Auth extends CI_Controller
 
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				// cek role / group
-				if ($this->ion_auth->in_group('participant')) {
+				if ($this->ion_auth->in_group(['participant'])) {
 					redirect('dashboard', 'refresh');
-				} elseif ($this->ion_auth->in_group(['admin', 'reviewer'])) {
+				} elseif ($this->ion_auth->in_group(['admin', 'ahic', 'e2ipbc', 'irpc'])) {
 					redirect('admin/dashboard', 'refresh');
 				} else {
 					// default kalau tidak masuk group mana pun
@@ -105,6 +118,36 @@ class Auth extends CI_Controller
 				redirect('auth/login', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
 			}
 		} else {
+			// Menyiapkan Data Captcha
+			$vals = array(
+				'word'          => random_string('alnum', 6),
+				'img_path'      => './captcha/',
+				'img_url'       => base_url() . 'captcha/',
+
+				// UBAH BARIS INI: Gunakan FCPATH
+				'font_path'     => FCPATH . 'system/fonts/texb.ttf',
+
+				'img_width'     => '150',
+				'img_height'    => 40,
+				'expiration'    => 7200,
+				'word_length'   => 8,
+				'font_size'     => 16,
+				'colors'        => array(
+					'background' => array(255, 255, 255),
+					'border' => array(204, 204, 204),
+					'text' => array(0, 0, 0),
+					'grid' => array(255, 192, 203)
+				)
+			);
+
+			// Buat Captcha
+			$cap = create_captcha($vals);
+
+			// Simpan teks captcha ke dalam session untuk dicocokkan nanti
+			$data['word'] = $this->session->set_userdata('captcha_word', $cap['word']);
+
+			// Kirim gambar captcha ke view
+			$data['captcha_image'] = $this->data['captcha_image'] = $cap['image'];
 			// the user is not logging in so display the login page
 			// set the flash data error message if there is one
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
@@ -125,6 +168,7 @@ class Auth extends CI_Controller
 			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'login', $this->data);
 			$data['website'] = $this->M_settings->get_all_settings();
 			$data['title'] = 'Sign In';
+			$data['google_login_url'] = $this->data['google_login_url'];
 			$data['content'] = 'auth/login';
 			$this->load->view(
 				'layouts/userlte3',
@@ -133,6 +177,215 @@ class Auth extends CI_Controller
 		}
 	}
 
+
+	public function refresh_captcha()
+	{
+		$this->load->helper('captcha');
+		$this->load->helper('string'); // Tambahkan helper string jika belum di-load di autoload
+
+		$vals = array(
+			// KUNCI UTAMA: Paksa word dibuat acak secara eksplisit di sini
+			'word'          => random_string('alnum', 5),
+			'img_path'      => './captcha/',
+			'img_url'       => base_url('captcha/'),
+			'font_path'     => FCPATH . 'system/fonts/texb.ttf', // Tambahkan font path agar render gambarnya sempurna
+			'img_width'     => 150,
+			'img_height'    => 40,
+			'expiration'    => 5, // Ubah ke 5 detik saja agar file sampah cepat terhapus dan tidak menumpuk
+			'word_length'   => 5,
+			'font_size'     => 16,
+			'colors'        => array(
+				'background' => array(255, 255, 255),
+				'border'     => array(206, 212, 234),
+				'text'       => array(0, 0, 0),
+				'grid'       => array(255, 182, 193)
+			)
+		);
+
+		$cap = create_captcha($vals);
+
+		// Amankan word baru ke session
+		$this->session->set_userdata('captcha_word', $cap['word']);
+
+		// Kirimkan balik tag <img> ke AJAX
+		echo $cap['image'];
+	}
+
+	public function check_captcha($str)
+	{
+		$word = $this->session->userdata('captcha_word');
+
+		// Membandingkan input user dengan session (case-insensitive)
+		if (strtolower($str) !== strtolower($word)) {
+			$this->form_validation->set_message('check_captcha', 'Kode Captcha yang Anda masukkan salah!');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	public function google_callback()
+	{
+		try {
+			$this->load->config('google');
+
+			$client = new Google_Client();
+			$client->setClientId($this->config->item('client_id', 'google'));
+			$client->setClientSecret($this->config->item('client_secret', 'google'));
+			$client->setRedirectUri($this->config->item('redirect_uri', 'google'));
+
+			// Check if code parameter exists
+			if (!isset($_GET['code'])) {
+				$error = isset($_GET['error']) ? $_GET['error'] : 'unknown_error';
+				$error_desc = isset($_GET['error_description']) ? $_GET['error_description'] : 'No authorization code received from Google';
+
+				log_message('error', 'Google OAuth Error: ' . $error . ' - ' . $error_desc);
+				$this->session->set_flashdata('message', 'Google login failed: ' . $error_desc);
+				redirect('auth/login', 'refresh');
+				return;
+			}
+
+			// Exchange authorization code for access token
+			try {
+				$token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+			} catch (Exception $e) {
+				log_message('error', 'Google Token Error: ' . $e->getMessage());
+				$this->session->set_flashdata('message', 'Failed to get access token from Google: ' . $e->getMessage());
+				redirect('auth/login', 'refresh');
+				return;
+			}
+
+			$client->setAccessToken($token);
+
+
+			// Get user info
+			try {
+				$google_oauth = new Google_Service_Oauth2($client);
+				$google_account_info = $google_oauth->userinfo->get();
+			} catch (Exception $e) {
+				log_message('error', 'Google UserInfo Error: ' . $e->getMessage());
+				$this->session->set_flashdata('message', 'Failed to get user info from Google: ' . $e->getMessage());
+				redirect('auth/login', 'refresh');
+				return;
+			}
+
+			$email = $google_account_info->email;
+			$oauth_uid = $google_account_info->id;
+
+			// Validate email
+			if (empty($email) || empty($oauth_uid)) {
+				log_message('error', 'Google returned empty email or oauth_uid');
+				$this->session->set_flashdata('message', 'Google did not provide required information (email)');
+				redirect('auth/login', 'refresh');
+				return;
+			}
+
+			// Check if email already registered
+			if ($this->ion_auth->email_check($email)) {
+				// Email exists - update OAuth fields if needed
+				$user = $this->db->where('email', $email)->get('users')->row();
+
+				if (!empty($user)) {
+					// Always update profile_pic and oauth_uid from latest Google data
+					$update_data = [
+						'oauth_provider' => 'google',
+						'oauth_uid' => $oauth_uid,
+						'profile_pic' => isset($google_account_info->picture) ? $google_account_info->picture : NULL
+					];
+					$this->db->where('id', $user->id)->update('users', $update_data);
+					log_message('info', 'Updated OAuth fields for user: ' . $email);
+
+					// Login using custom method
+					if ($this->ion_auth_model->login_remotely($email)) {
+						// --- TAMBAHKAN BLOK INI ---
+						// Karena login_remotely kadang tidak set session secara penuh,
+						// kita pastikan session terbentuk sesuai standar Ion Auth.
+						$session_data = [
+							'identity'       => $user->email,
+							'email'          => $user->email,
+							'user_id'        => $user->id, // Ini krusial untuk in_group()
+							'old_last_login' => $user->last_login,
+							'last_check'     => time(),
+						];
+						$this->session->set_userdata($session_data);
+						// -------------------------
+
+						$this->M_log_user->save_log($user->id, 'User login via Google');
+						$this->session->set_flashdata('message', 'Login successful via Google ');
+
+						// Prevent caching
+						$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+						$this->output->set_header('Pragma: no-cache');
+
+						// Redirect based on user group - TAMBAHKAN PARAMETER KEDUA ($user->id)
+						if ($this->ion_auth->in_group('participant', $user->id)) {
+							redirect('dashboard'); // Hapus 'refresh' agar session tidak terpotong
+						} elseif ($this->ion_auth->in_group('admin', $user->id)) {
+							redirect('admin/dashboard');
+						} else {
+							redirect('/');
+						}
+						return;
+					}
+				}
+			} else {
+				// Email not exists - auto-register
+				$username = explode('@', $email)[0];
+				$password = bin2hex(random_bytes(10));
+
+				$additional_data = [
+					'first_name' 		=> isset($google_account_info->givenName) ? $google_account_info->givenName : 'User',
+					'last_name' 		=> isset($google_account_info->familyName) ? $google_account_info->familyName : '',
+					'oauth_provider' 	=> 'google',
+					'oauth_uid' 		=> $oauth_uid,
+					'profile_pic' 		=> isset($google_account_info->picture) ? $google_account_info->picture : NULL,
+					'active' 			=> 1
+				];
+
+				// Register new user
+				$register_id = $this->ion_auth->register($username, $password, $email, $additional_data);
+
+				if ($register_id) {
+					log_message('info', 'New user registered via Google: ' . $email);
+
+					// User automatically added to default group by ion_auth->register()
+					// No need to manually add to group
+
+					// Auto-login
+					if ($this->ion_auth_model->login_remotely($email)) {
+						$session_data = [
+							'identity'       => $email,
+							'email'          => $email,
+							'user_id'        => $register_id,
+							'old_last_login' => time(),
+							'last_check'     => time(),
+						];
+						$this->session->set_userdata($session_data);
+						// -------------------------
+
+						$this->M_log_user->save_log($register_id, 'User registration and login via Google');
+						$this->session->set_flashdata('message', 'Account created successfully via Google! ');
+
+						redirect('dashboard'); // Hapus parameter 'refresh'
+						return;
+					} else {
+						log_message('error', 'login_remotely failed after registration for: ' . $email);
+						$this->session->set_flashdata('message', 'Account created but login failed');
+						redirect('auth/login', 'refresh');
+						return;
+					}
+				} else {
+					log_message('error', 'User registration failed for: ' . $email . ' - ' . $this->ion_auth->errors());
+					$this->session->set_flashdata('message', 'Account creation failed: ' . $this->ion_auth->errors());
+					redirect('auth/login', 'refresh');
+					return;
+				}
+			}
+		} catch (Exception $e) {
+			log_message('error', 'Google Callback Exception: ' . $e->getMessage());
+			$this->session->set_flashdata('message', 'An error occurred during Google login: ' . $e->getMessage());
+			redirect('auth/login', 'refresh');
+		}
+	}
 	/**
 	 * Log the user out
 	 */
@@ -802,8 +1055,18 @@ class Auth extends CI_Controller
 
 	public function register()
 	{
+		$this->load->config('google');
+
+		$client = new Google_Client();
+		$client->setClientId($this->config->item('client_id', 'google'));
+		$client->setClientSecret($this->config->item('client_secret', 'google'));
+		$client->setRedirectUri($this->config->item('redirect_uri', 'google'));
+		$client->addScope("email");
+		$client->addScope("profile");
+
 		$data['website'] = $this->M_settings->get_all_settings();
 		$data['title'] = 'Registration Page';
+		$data['google_login_url'] = $client->createAuthUrl();
 		$data['content'] = 'auth/register';
 		$this->load->view('layouts/userlte3', $data);
 	}

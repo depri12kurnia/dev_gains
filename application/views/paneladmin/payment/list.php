@@ -7,6 +7,9 @@
                     <i class="fas fa-credit-card mr-2"></i>
                     Data Payment
                 </h3>
+                <button type="button" id="btn_export_excel" class="btn btn-success btn-sm float-right">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
             </div>
 
             <div class="card-body">
@@ -16,6 +19,7 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Email</th>
+                                <th>Name</th>
                                 <th>Bank</th>
                                 <th>Sender</th>
                                 <th>Status</th>
@@ -173,6 +177,49 @@
         });
     }
 
+
+    $(document).ready(function() {
+        // Cek apakah DataTable sudah diinisialisasi
+        if (!$.fn.DataTable.isDataTable('#data_payment')) {
+            table = $('#data_payment').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "responsive": false,
+                "autoWidth": false,
+                "lengthChange": true,
+                "ordering": false,
+                "ajax": {
+                    "url": "<?php echo site_url('admin/payment/ajax_list') ?>",
+                    "type": "POST",
+                    "data": function(d) {
+                        d.csrf_token_jkt3 = getCsrfToken(); // Kirim CSRF token sebagai data POST
+                    },
+                    "error": function(xhr) {
+                        console.log("Error:", xhr.responseText);
+                    }
+                }
+
+            });
+        }
+
+        $('input[name="status"]').on('change', toggleReasonField);
+        $('#btnSave').on('click', function(e) {
+            e.preventDefault();
+
+            var id = $('[name="id"]').val();
+            var status = $('input[name="status"]:checked').val();
+            var comment = $('[name="comment"]').val();
+            verifyPayment(id, status, comment);
+        });
+
+        // Export to Excel button event
+        $('#btn_export_excel').click(function() {
+            var url = "<?php echo site_url('admin/payment/export_excel') ?>";
+            window.open(url, '_blank');
+        });
+    });
+
+
     function verifyPayment(id, status, comment) {
         if (status === 'rejected' && (!comment || !comment.trim())) {
             Swal.fire('Warning', 'Please provide a rejection reason.', 'warning');
@@ -276,36 +323,4 @@
 
         window.open(url, '_blank');
     }
-
-    $(document).ready(function() {
-        // Cek apakah DataTable sudah diinisialisasi
-        if (!$.fn.DataTable.isDataTable('#data_payment')) {
-            table = $('#data_payment').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "responsive": false,
-                "autoWidth": false,
-                "lengthChange": true,
-                "ajax": {
-                    "url": "<?php echo site_url('admin/payment/ajax_list') ?>",
-                    "type": "POST",
-                    "data": function(d) {
-                        d.csrf_token_jkt3 = getCsrfToken(); // Kirim CSRF token sebagai data POST
-                    },
-                    "error": function(xhr) {
-                        console.log("Error:", xhr.responseText);
-                    }
-                }
-
-            });
-        }
-
-        $('input[name="status"]').on('change', toggleReasonField);
-        $('#btnSave').on('click', function() {
-            var id = $('[name="id"]').val();
-            var status = $('input[name="status"]:checked').val();
-            var comment = $('[name="comment"]').val();
-            verifyPayment(id, status, comment);
-        });
-    });
 </script>

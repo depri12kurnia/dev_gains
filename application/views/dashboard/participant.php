@@ -47,9 +47,9 @@
 
     $status_submission = $submission_status ?: 'registered';
     $progress_submission = 20;
-    if ($status_submission === 'submitted' || $status_submission === 'under review') {
+    if ($status_submission === 'submitted' || $status_submission === 'revision') {
         $progress_submission = 60;
-    } elseif ($status_submission === 'not selected' || $status_submission === 'finalist') {
+    } elseif ($status_submission === 'not_selected' || $status_submission === 'finalist') {
         $progress_submission = 100;
     }
     ?>
@@ -87,23 +87,36 @@
         <div id="dash-tab-dashboard" class="dash-content active">
             <h2 class="text-2xl mb-2">Welcome to your Portal!</h2>
             <p class="text-gray-600 mb-8">Manage your registration, complete your payment, and submit your documents here.</p>
-            <!-- End Registration Status -->
+
+            <?php if ($this->session->flashdata('message')): ?>
+                <div style="margin-top:2rem; background:var(--info-bg); border:1px solid var(--info-border); border-radius:0.75rem; padding:1rem; display:flex; align-items:center;">
+                    <div>
+                        <?= $this->session->flashdata('message'); ?>
+                    </div>
+
+                    <?php if (empty($this->session->userdata('phone'))): ?>
+                        <a href="javascript:void(0)" class="ml-auto" onclick="switchDashboardTab('settings')" id="tab-btn-settings" style="font-weight: bold; text-decoration: underline;">
+                            Update Your Phone Number !
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             <!-- Payment and Submission Status  -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg">Payment Status</h3>
+                    <h3 class="text-lg">Payment & Submission Status</h3>
 
                     <span style="padding:0.25rem 0.75rem; background:var(--warning-bg); color:var(--warning-text); font-size:0.75rem; font-weight:bold; border-radius:9999px; text-transform:uppercase;"><?php
                                                                                                                                                                                                             $status = strtolower($user_status);
 
                                                                                                                                                                                                             $map = [
                                                                                                                                                                                                                 'registered' => 'Registered',
-                                                                                                                                                                                                                'pending'    => 'Pending',
-                                                                                                                                                                                                                'approved'   => 'Approved',
-                                                                                                                                                                                                                'rejected'   => 'Rejected',
-                                                                                                                                                                                                                'submitted'  => 'Submitted',
+                                                                                                                                                                                                                'pending'    => 'Please wait, the verification process is underway.',
+                                                                                                                                                                                                                'approved'   => 'Your Payment Approved',
+                                                                                                                                                                                                                'rejected'   => 'Your Payment Rejected',
+                                                                                                                                                                                                                'submitted'  => 'Your Submission Submitted & Under Review',
                                                                                                                                                                                                                 'under review' => 'Under Review',
-                                                                                                                                                                                                                'not selected' => 'Not Selected',
+                                                                                                                                                                                                                'not_selected' => 'Not Selected',
                                                                                                                                                                                                                 'finalist'   => 'Finalist',
                                                                                                                                                                                                             ];
 
@@ -117,12 +130,12 @@
                     <div class="flex justify-between" style="font-size:0.75rem; font-weight:500;">
 
                         <!-- Step 1: Registered -->
-                        <span class="<?= in_array($status, ['registered', 'pending', 'approved', 'submitted', 'finalist', 'not selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
+                        <span class="<?= in_array($status, ['registered', 'pending', 'approved', 'submitted', 'finalist', 'not_selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
                             Registered
                         </span>
 
                         <!-- Step 2: Payment -->
-                        <span class="<?= in_array($status, ['pending', 'approved', 'submitted', 'finalist', 'not selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
+                        <span class="<?= in_array($status, ['pending', 'approved', 'submitted', 'finalist', 'not_selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
                             Payment
                             <?php if ($status == 'rejected'): ?>
                                 <div class="alert alert-danger mt-2" style="font-size: 0.75rem;">
@@ -132,7 +145,7 @@
                         </span>
 
                         <!-- Step 3: Approved/Submission -->
-                        <span class="<?= in_array($status, ['approved', 'submitted', 'under review', 'finalist', 'not selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
+                        <span class="<?= in_array($status, ['approved', 'submitted', 'under review', 'finalist', 'not_selected']) ? 'text-primary font-bold' : 'text-gray-400' ?>">
                             Verified & Submission
                         </span>
 
@@ -185,7 +198,7 @@
                             'color' => '#6610f2',
                             'icon'  => 'trophy'
                         ],
-                        'not selected' => [
+                        'not_selected' => [
                             'title' => 'Announcement',
                             'text'  => 'Thank you for your participation. Unfortunately, you haven\'t made it to the final round this time. Keep spirit!',
                             'color' => '#dc3545',
@@ -224,7 +237,15 @@
                     <ul style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.875rem;">
                         <li class="flex flex-col"><span class="text-gray-500" style="font-size:0.75rem;">Full Name</span> <span class="font-bold"><?= htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?></span></li>
                         <li class="flex flex-col"><span class="text-gray-500" style="font-size:0.75rem;">Email</span> <span class="font-bold"><?= htmlspecialchars($user->email, ENT_QUOTES, 'UTF-8'); ?></span></li>
-                        <li class="flex flex-col"><span class="text-gray-500" style="font-size:0.75rem;">Phone</span> <span class="font-bold"><?= htmlspecialchars($user->phone, ENT_QUOTES, 'UTF-8'); ?></span></li>
+                        <li class="flex flex-col"><span class="text-gray-500" style="font-size:0.75rem;">Phone</span>
+                            <span class="font-bold"><?= htmlspecialchars($user->phone, ENT_QUOTES, 'UTF-8'); ?>
+                                <?php if (empty($this->session->userdata('phone'))): ?>
+                                    <a href="javascript:void(0)" class="ml-auto" onclick="switchDashboardTab('settings')" id="tab-btn-settings" style="font-weight: bold; text-decoration: underline;">
+                                        Update Your Phone Number
+                                    </a>
+                                <?php endif; ?>
+                            </span>
+                        </li>
                     </ul>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
@@ -290,48 +311,14 @@
                                 </div>
                             <?php endif; ?>
                             <div style="margin-top:2rem; background:var(--info-bg); border:1px solid var(--info-border); border-radius:0.75rem; padding:1rem; display:flex;">
-                                <?php
-                                $status = strtolower(trim((string)$user_status));
-
-                                $map = [
-                                    'registered' => [
-                                        'text'  => 'You haven\'t completed your registration fee payment. Please proceed to the Payment Info & Upload tab to upload your proof of transfer and secure your spot',
-                                        'color' => '#6c757d',
-                                        'icon'  => 'user-plus'
-                                    ],
-                                    'pending' => [
-                                        'text'  => 'Pending',
-                                        'color' => '#ffc107',
-                                        'icon'  => 'clock'
-                                    ],
-                                    'approved' => [
-                                        'text'  => 'Your payment has been verified! However, you haven\'t selected a competition category or submitted your files yet. Please proceed to the My Submission tab to complete your application before the deadline (June 2026).',
-                                        'color' => '#28a745',
-                                        'icon'  => 'check-circle'
-                                    ],
-                                    'rejected' => [
-                                        'text'  => 'Rejected',
-                                        'color' => '#dc3545',
-                                        'icon'  => 'x-circle'
-                                    ],
-
-                                ];
-
-                                $data = $map[$status] ?? [
-                                    'text'  => 'Unknown',
-                                    'color' => '#999',
-                                    'icon'  => 'help-circle'
-                                ];
-                                ?>
-
                                 <!-- ICON -->
-                                <i data-lucide="<?= $data['icon']; ?>"
-                                    style="color:<?= $data['color']; ?>; margin-right:0.75rem; flex-shrink:0;">
+                                <i data-lucide="check-circle"
+                                    style="color:#28a745; margin-right:0.75rem; flex-shrink:0;">
                                 </i>
 
                                 <div>
-                                    <h4 style="font-size:0.875rem; color:<?= $data['color']; ?>; margin-bottom:0.25rem;">
-                                        <?= $data['text']; ?>
+                                    <h4 style="font-size:0.875rem; color:#28a745; margin-bottom:0.25rem;">
+                                        Your payment has been verified! However, you haven't selected a competition category or submitted your files yet. Please proceed to the My Submission tab to complete your application before the deadline (June 2026).
                                     </h4>
                                 </div>
                             </div>
@@ -350,7 +337,7 @@
                         <?php endif; ?>
 
                         <h3 class="text-red-700 font-bold text-lg">❌ Payment Rejected</h3>
-                        <p class="text-red-600">Reason : <?= $p->comment; ?>. <br>Please upload a valid proof of payment.</p>
+                        <p class="text-red-600">Reason : <b><?= $p->comment; ?>.</b> <br>Please upload a valid proof of payment.</p>
 
                         <?php $p = $payment ?? null; ?>
 
@@ -623,7 +610,7 @@
                                     'icon'  => 'search'
                                 ],
 
-                                'not selected' => [
+                                'not_selected' => [
                                     'text'  => 'Thank you for your valuable participation in GAINS 2026. Unfortunately, your submission was not selected for the final round this year. We highly appreciate your effort and encourage you to join us again next year.',
                                     'color' => '#343a40',
                                     'icon'  => 'slash'
@@ -653,20 +640,42 @@
                                 </h4>
                             </div>
                         </div>
-                    <?php elseif ($submission_status == 'under review'): ?>
+                        <!-- View Recommendations -->
+
+                    <?php elseif ($submission_status == 'revision'): ?>
                         <div class="form-group">
-                            <h3 class="text-yellow-700 font-bold text-lg">⏳ Submission Under Review</h3>
-                            <img src="<?= base_url('public/uploads/open/under_review.png'); ?>" style="max-width:200px; border-radius:8px;align:justify;">
+                            <img src="<?= base_url('public/uploads/open/revision.png'); ?>" style="max-width:100px; border-radius:8px;align:justify;">
                         </div>
                         <div style="margin-top:2rem; background:var(--info-bg); border:1px solid var(--info-border); border-radius:0.75rem; padding:1rem; display:flex;">
                             <?php
                             $status = strtolower(trim((string)$submission_status));
 
                             $map = [
-                                'under review' => [
-                                    'text'  => 'Your submission is currently under review by our expert panel. Please wait for the Acceptance Notification in August 2026.',
+                                'registered' => [
+                                    'text'  => 'Registered',
+                                    'color' => '#6c757d',
+                                    'icon'  => 'user-plus'
+                                ],
+                                'revision' => [
+                                    'text'  => 'Your submission is revision please check judges comments',
                                     'color' => '#ffc107',
                                     'icon'  => 'clock'
+                                ],
+                                'submitted' => [
+                                    'text'  => 'Your submission has been successfully received and is currently under review by our expert panel. Please wait for the Acceptance Notification in August 2026.',
+                                    'color' => '#17a2b8',
+                                    'icon'  => 'search'
+                                ],
+
+                                'not_selected' => [
+                                    'text'  => 'Thank you for your valuable participation in GAINS 2026. Unfortunately, your submission was not selected for the final round this year. We highly appreciate your effort and encourage you to join us again next year.',
+                                    'color' => '#343a40',
+                                    'icon'  => 'slash'
+                                ],
+                                'finalist' => [
+                                    'text'  => 'Congratulations! You have been shortlisted for the final round! Please check your email for presentation guidelines and confirm your physical/online attendance for the Conference & Final GAINS on 15-16 September 2026.',
+                                    'color' => '#CFB53B',
+                                    'icon'  => 'award'
                                 ],
                             ];
 
@@ -687,10 +696,88 @@
                                     <?= $data['text']; ?>
                                 </h4>
                             </div>
-
                         </div>
+                        <!-- View Recommendations -->
+                        <?php if (!empty($judges_comments)): ?>
+                            <div style="margin-top: 2.5rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
 
-                    <?php elseif ($submission_status == 'not selected'): ?>
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="message-square-code" style="color: #3b82f6; width: 22px; height: 22px;"></i>
+                                    Review & Feedback from Expert Panel (Judges)
+                                </h3>
+
+                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                    <?php $no = 1;
+                                    foreach ($judges_comments as $comment): ?>
+                                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; shadow-sm">
+
+                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <span style="background: #3b82f6; color: #ffffff; font-weight: 700; border-radius: 50%; text-align: center; display: inline-block; width: 28px; height: 28px; line-height: 28px; font-size: 0.85rem;">
+                                                        <?= $no; ?>
+                                                    </span>
+                                                    <h5 style="font-weight: 700; color: #0f172a; font-size: 0.95rem; margin: 0;">
+                                                        Reviewer Panelist <?= $no; ?>
+                                                    </h5>
+                                                </div>
+
+                                                <div>
+                                                    <?php
+                                                    $rec_status = $comment['recommendation_status'];
+                                                    if ($rec_status == 'Qualified for the Final Round'): ?>
+                                                        <span style="background-color: #d1fae5; color: #065f46; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-trophy"></i> Final Round
+                                                        </span>
+                                                    <?php elseif ($rec_status == 'Qualified with Minor Revisions'): ?>
+                                                        <span style="background-color: #fef3c7; color: #92400e; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-tools"></i> Minor Revision
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span style="background-color: #fee2e2; color: #991b1b; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-times-circle"></i> Not Selected
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.875rem;">
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #059669; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-plus-circle"></i> KEY STRENGTHS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_strengths']) ? nl2br(htmlspecialchars($comment['key_strengths'])) : '<span style="color: #94a3b8; font-style: italic;">No specific strengths commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #dc2626; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-minus-circle"></i> KEY WEAKNESSES
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_weaknesses']) ? nl2br(htmlspecialchars($comment['key_weaknesses'])) : '<span style="color: #94a3b8; font-style: italic;">No specific weaknesses commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #2563eb; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-lightbulb"></i> CONSTRUCTIVE RECOMMENDATIONS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['recommendations']) ? nl2br(htmlspecialchars($comment['recommendations'])) : '<span style="color: #94a3b8; font-style: italic;">No specific recommendations provided.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <?php $no++;
+                                    endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                    <?php elseif ($submission_status == 'not_selected'): ?>
                         <div class="form-group">
                             <h3 class="text-red-700 font-bold text-lg">❌ Submission Not Selected</h3>
                             <img src="<?= base_url('public/uploads/open/not_selected.png'); ?>" style="max-width:200px; border-radius:8px;align:justify;">
@@ -701,7 +788,7 @@
 
                             $map = [
 
-                                'not selected' => [
+                                'not_selected' => [
                                     'text'  => 'Thank you for your valuable participation in GAINS 2026. Unfortunately, your submission was not selected for the final round this year. We highly appreciate your effort and encourage you to join us again next year.',
                                     'color' => '#fa0808',
                                     'icon'  => 'timer-off'
@@ -726,11 +813,169 @@
                                     <?= $data['text']; ?>
                                 </h4>
                             </div>
+
                         </div>
+                        <?php if (!empty($judges_comments)): ?>
+                            <div style="margin-top: 2.5rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="message-square-code" style="color: #3b82f6; width: 22px; height: 22px;"></i>
+                                    Review & Feedback from Expert Panel (Judges)
+                                </h3>
+
+                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                    <?php $no = 1;
+                                    foreach ($judges_comments as $comment): ?>
+                                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; shadow-sm">
+
+                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <span style="background: #3b82f6; color: #ffffff; font-weight: 700; border-radius: 50%; text-align: center; display: inline-block; width: 28px; height: 28px; line-height: 28px; font-size: 0.85rem;">
+                                                        <?= $no; ?>
+                                                    </span>
+                                                    <h5 style="font-weight: 700; color: #0f172a; font-size: 0.95rem; margin: 0;">
+                                                        Reviewer Panelist <?= $no; ?>
+                                                    </h5>
+                                                </div>
+
+                                                <div>
+                                                    <?php
+                                                    $rec_status = $comment['recommendation_status'];
+                                                    if ($rec_status == 'Qualified for the Final Round'): ?>
+                                                        <span style="background-color: #d1fae5; color: #065f46; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-trophy"></i> Final Round
+                                                        </span>
+                                                    <?php elseif ($rec_status == 'Qualified with Minor Revisions'): ?>
+                                                        <span style="background-color: #fef3c7; color: #92400e; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-tools"></i> Minor Revision
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span style="background-color: #fee2e2; color: #991b1b; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-times-circle"></i> Not Selected
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.875rem;">
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #059669; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-plus-circle"></i> KEY STRENGTHS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_strengths']) ? nl2br(htmlspecialchars($comment['key_strengths'])) : '<span style="color: #94a3b8; font-style: italic;">No specific strengths commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #dc2626; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-minus-circle"></i> KEY WEAKNESSES
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_weaknesses']) ? nl2br(htmlspecialchars($comment['key_weaknesses'])) : '<span style="color: #94a3b8; font-style: italic;">No specific weaknesses commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #2563eb; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-lightbulb"></i> CONSTRUCTIVE RECOMMENDATIONS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['recommendations']) ? nl2br(htmlspecialchars($comment['recommendations'])) : '<span style="color: #94a3b8; font-style: italic;">No specific recommendations provided.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <?php $no++;
+                                    endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     <?php else: ?>
                         <?php if ($status === 'submitted'): ?>
                             <div class="mb-4 text-success">
                                 ✔ You have submitted before. You can update your submission.
+                            </div>
+                        <?php endif; ?>
+                        <!-- View Recommendations -->
+                        <?php if (!empty($judges_comments)): ?>
+                            <div style="margin-top: 2.5rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="message-square-code" style="color: #3b82f6; width: 22px; height: 22px;"></i>
+                                    Review & Feedback from Expert Panel (Judges)
+                                </h3>
+
+                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                    <?php $no = 1;
+                                    foreach ($judges_comments as $comment): ?>
+                                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; shadow-sm">
+
+                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <span style="background: #3b82f6; color: #ffffff; font-weight: 700; border-radius: 50%; text-align: center; display: inline-block; width: 28px; height: 28px; line-height: 28px; font-size: 0.85rem;">
+                                                        <?= $no; ?>
+                                                    </span>
+                                                    <h5 style="font-weight: 700; color: #0f172a; font-size: 0.95rem; margin: 0;">
+                                                        Reviewer Panelist <?= $no; ?>
+                                                    </h5>
+                                                </div>
+
+                                                <div>
+                                                    <?php
+                                                    $rec_status = $comment['recommendation_status'];
+                                                    if ($rec_status == 'Qualified for the Final Round'): ?>
+                                                        <span style="background-color: #d1fae5; color: #065f46; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-trophy"></i> Final Round
+                                                        </span>
+                                                    <?php elseif ($rec_status == 'Qualified with Minor Revisions'): ?>
+                                                        <span style="background-color: #fef3c7; color: #92400e; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-tools"></i> Minor Revision
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span style="background-color: #fee2e2; color: #991b1b; padding: 0.35rem 1rem; font-weight: 700; border-radius: 9999px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                            <i class="fas fa-times-circle"></i> Not Selected
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.875rem;">
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #059669; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-plus-circle"></i> KEY STRENGTHS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_strengths']) ? nl2br(htmlspecialchars($comment['key_strengths'])) : '<span style="color: #94a3b8; font-style: italic;">No specific strengths commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #dc2626; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-minus-circle"></i> KEY WEAKNESSES
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['key_weaknesses']) ? nl2br(htmlspecialchars($comment['key_weaknesses'])) : '<span style="color: #94a3b8; font-style: italic;">No specific weaknesses commented.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <span style="display: block; font-weight: 700; color: #2563eb; font-size: 0.75rem; text-uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+                                                        <i class="fas fa-lightbulb"></i> CONSTRUCTIVE RECOMMENDATIONS
+                                                    </span>
+                                                    <div style="color: #334155; background: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; line-height: 1.5;">
+                                                        <?= !empty($comment['recommendations']) ? nl2br(htmlspecialchars($comment['recommendations'])) : '<span style="color: #94a3b8; font-style: italic;">No specific recommendations provided.</span>'; ?>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <?php $no++;
+                                    endforeach; ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                         <form method="post" action="<?= base_url('dashboard/save_submission'); ?>" enctype="multipart/form-data">
@@ -869,15 +1114,23 @@
 
                                 <div class="mb-4">
                                     <label class="form-label fw-medium text-secondary">Focus Area <span class="text-danger">*</span></label>
-                                    <select name="focus_area" class="form-select py-2 rounded-3" required>
+                                    <select id="areaSelect" name="focus_area" class="form-select py-2 rounded-3" required>
                                         <option value="" disabled <?= empty($s->focus_area ?? '') ? 'selected' : '' ?>>Select focus area...</option>
+
                                         <?php
-                                        $focusAreas = ["NCDs", "Women's Health", "NCDs and Women's Health", "Health Education", "Healthcare Services", "Health Policy", "Other"];
+                                        $focusAreas = ["NCDs", "Women's Health", "NCDs and Women's Health", "Health Education", "Healthcare Services", "Health Policy"];
                                         foreach ($focusAreas as $area):
                                         ?>
                                             <option value="<?= $area ?>" <?= (($s->focus_area ?? '') === $area) ? 'selected' : '' ?>><?= $area ?></option>
                                         <?php endforeach; ?>
+
+                                        <option value="Other" <?= (($s->focus_area ?? '') && !in_array($s->focus_area, $focusAreas)) ? 'selected' : '' ?>>Other</option>
                                     </select>
+                                </div>
+
+                                <div id="otherAreaDiv" class="mb-4 <?= (!empty($s->focus_area ?? '') && !in_array($s->focus_area, $focusAreas)) ? '' : 'd-none-custom' ?>">
+                                    <label class="form-label fw-medium text-secondary">Please specify your focus area <span class="text-danger">*</span></label>
+                                    <input type="text" id="otherAreaInput" name="other_area" value="<?= (!empty($s->focus_area ?? '') && !in_array($s->focus_area, $focusAreas)) ? $s->focus_area : '' ?>" class="form-control" placeholder="Enter your focus area">
                                 </div>
 
                                 <div class="mb-4">
@@ -949,12 +1202,13 @@
                             </div>
                         </form>
 
-
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 const countrySelect = document.getElementById('countrySelect');
                                 const otherCountryDiv = document.getElementById('otherCountryDiv');
                                 const otherCountryInput = document.getElementById('otherCountryInput');
+                                const otherAreaDiv = document.getElementById('otherAreaDiv');
+                                const otherAreaInput = document.getElementById('otherAreaInput');
                                 const teamRadios = document.querySelectorAll('input[name="partType"]');
                                 const teamMembersDiv = document.getElementById('teamMembersDiv');
                                 const teamMembersInput = document.getElementById('teamMembersInput');
@@ -968,6 +1222,17 @@
                                     } else {
                                         otherCountryDiv.classList.add('d-none-custom');
                                         otherCountryInput.required = false;
+                                    }
+                                }
+
+                                function updateArea() {
+                                    if (!areaSelect) return;
+                                    if (areaSelect.value === 'Other') {
+                                        otherAreaDiv.classList.remove('d-none-custom');
+                                        otherAreaInput.required = true;
+                                    } else {
+                                        otherAreaDiv.classList.add('d-none-custom');
+                                        otherAreaInput.required = false;
                                     }
                                 }
 
@@ -987,11 +1252,17 @@
                                     updateCountry();
                                 }
 
+                                if (areaSelect) {
+                                    areaSelect.addEventListener('change', updateArea);
+                                    updateArea();
+                                }
+
                                 teamRadios.forEach(radio => radio.addEventListener('change', updateTeamMembers));
 
                                 updateTeamMembers();
                             });
                         </script>
+
                     <?php endif; ?>
                 </div>
             </div>

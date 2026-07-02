@@ -2652,4 +2652,44 @@ class Ion_auth_model extends CI_Model
 			return FALSE;
 		}
 	}
+
+	public function login_remotely($email)
+	{
+		// 1. Ambil data user secara utuh berdasarkan email
+		$user = $this->db->where('email', $email)->get($this->tables['users'])->row();
+
+		if ($user) {
+			// 2. Pastikan user dalam status aktif
+			if ($user->active == 0) {
+				return FALSE;
+			}
+
+			// 3. Ambil data role/group user untuk validasi $this->ion_auth->in_group()
+			$this->load->library('ion_auth');
+			$user_groups = $this->ion_auth->get_users_groups($user->id)->result();
+			$groups = [];
+			foreach ($user_groups as $group) {
+				$groups[$group->id] = $group->name;
+			}
+
+			// 4. Gunakan set_session() standar Ion Auth agar semua flag dan hash session ter-set
+			$this->set_session($user);
+
+			// Tambahkan data tambahan ke session (username, id, profile_pic, groups)
+			$extra = [
+				'id' => $user->id,
+				'username' => (!empty($user->username)) ? $user->username : explode('@', $user->email)[0],
+				'profile_pic' => isset($user->profile_pic) ? $user->profile_pic : '',
+				'groups' => $groups // Menyimpan data grup agar fungsi in_group() bekerja
+			];
+			$this->session->set_userdata($extra);
+
+			// 5. Update log login terakhir bawaan Ion Auth
+			$this->update_last_login($user->id);
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 }

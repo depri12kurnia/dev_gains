@@ -52,7 +52,6 @@
                                 <th>Country</th>
                                 <th>Category</th>
                                 <th>Title</th>
-                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -63,12 +62,12 @@
     </div>
 </section>
 
-<!-- Modal Preview -->
+<!-- Modal Preview submission-->
 <div class="modal fade" id="modal_form" role="dialog">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">User Form</h3>
+                <h3 class="modal-title">Submission View</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -78,71 +77,124 @@
                     <input type="hidden" value="" name="id" />
                     <div class="form-body">
                         <div class="row">
-                            <div class="col-lg-6 col-12">
+                            <!-- SECTION A: Participant Data -->
+                            <div class="col-lg-4 col-12">
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Email</label>
+                                    <label class="control-label col-md-12">Team Leader (full name)</label>
                                     <div class="col-md-12">
-                                        <input name="email" placeholder="Email" class="form-control" type="email" readonly>
+                                        <input name="team_leader" placeholder="Team Leader" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Institution</label>
+                                    <label class="control-label col-md-12">Academic/Professional Titles *</label>
+                                    <div class="col-md-12">
+                                        <input name="leader_titles" placeholder="Leader Titles" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-12">Institution</label>
                                     <div class="col-md-12">
                                         <input name="institution" placeholder="Institution" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Country</label>
+                                    <label class="control-label col-md-6">Country</label>
                                     <div class="col-md-12">
                                         <input name="country" placeholder="Country" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="col-lg-4 col-12">
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Category</label>
+                                    <label class="control-label col-md-6">Participation Type</label>
+                                    <div class="col-md-12">
+                                        <input name="partType" placeholder="Participation Type" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-6">Cross Collaboration</label>
+                                    <div class="col-md-12">
+                                        <input name="crossCollab" placeholder="Cross Collaboration" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-12">Team Members</label>
+                                    <div class="col-md-12">
+                                        <textarea name="team_members" placeholder="Team Members" class="form-control" rows="4" readonly></textarea>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6">Category</label>
                                     <div class="col-md-12">
                                         <input name="category" placeholder="Category" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6 col-12">
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Title</label>
+                                    <label class="control-label col-md-6">Title</label>
                                     <div class="col-md-12">
                                         <input name="title" placeholder="Title" class="form-control" type="text" readonly>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Link</label>
+                                    <label class="control-label col-md-6">Focus Area</label>
                                     <div class="col-md-12">
-                                        <input name="link" id="link" placeholder="Link" class="form-control" type="url" readonly>
+                                        <input name="focus_area" placeholder="Focus Area" class="form-control" type="text" readonly>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12">Main Document</label>
+                                    <div class="col-md-12">
+                                        <a href="#" id="previewLink" target="_blank" style="display: none;"><button type="button" class="btn btn-warning"><i class="fas fa-link text-primary" aria-hidden="true"></i> Preview Link Main Document</button></a>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-12">Click Here to Preview</label>
+                                    <label class="control-label col-md-6">Supporting Links</label>
                                     <div class="col-md-12">
-                                        <a href="#" id="previewLink" target="_blank" style="display: none;"><button type="button" class="btn btn-warning"><i class="fas fa-link text-primary" aria-hidden="true"></i> Preview Link</button></a>
+                                        <a href="#" id="previewSupportLink" target="_blank" style="display: none;"><button type="button" class="btn btn-default"><i class="fas fa-link text-primary" aria-hidden="true"></i> Preview Link Supporting Documents</button></a>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6">Alignment Theme</label>
+                                    <div class="col-md-12">
+                                        <textarea name="alignment_theme" placeholder="Alignment Theme" class="form-control" rows="3" readonly></textarea>
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Status</label>
+
+                        <!-- <div class="form-group">
+                            <label class="control-label col-md-6">Status</label>
                             <div class="col-md-12">
                                 <input type="radio" name="status" value="finalist"> Finalist
+                                <input type="radio" name="status" value="under review"> Under Review
                                 <input type="radio" name="status" value="not selected"> Not Selected
                             </div>
-                        </div>
+                        </div> -->
                         <!-- if status rejected -->
                         <div class="form-group" id="reason_group" style="display: none;">
-                            <label class="control-label col-md-3">Reason</label>
+                            <label class="control-label col-md-6">Reason</label>
                             <div class="col-md-12">
                                 <textarea name="comment" placeholder="Reason" class="form-control" rows="3"></textarea>
                                 <span class="help-block"></span>
@@ -151,7 +203,7 @@
                         <!-- end if status rejected -->
                     </div>
                     <div class="modal-footer justify-content-start">
-                        <button type="button" class="btn btn-primary" id="btnSave">Save Verification</button>
+                        <!-- <button type="button" class="btn btn-primary" id="btnSave">Save Verification</button> -->
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -207,16 +259,25 @@
             success: function(data) {
                 $('[name="id"]').val(data.id);
                 $('[name="email"]').val(data.email);
+                $('[name="team_leader"]').val(data.team_leader);
+                $('[name="leader_titles"]').val(data.leader_titles);
                 $('[name="institution"]').val(data.institution);
                 $('[name="country"]').val(data.country);
+                $('[name="partType"]').val(data.partType);
+                $('[name="crossCollab"]').val(data.crossCollab);
+                $('[name="team_members"]').val(data.team_members);
                 $('[name="category"]').val(data.category);
                 $('[name="title"]').val(data.title);
+                $('[name="focus_area"]').val(data.focus_area);
+                $('[name="alignment_theme"]').val(data.alignment_theme);
                 $('[name="link"]').val(data.link);
+                $('[name="supporting_links"]').val(data.supporting_links);
                 $('[name="proof_file"]').val(data.proof_file || '');
                 $('[name="comment"]').val(data.comment || '');
 
                 // Update preview link
                 updatePreviewLink(data.link);
+                updatePreviewSupportLink(data.supporting_links);
 
                 $('input[name="status"]').prop('checked', false);
                 if (data.status) {
@@ -328,6 +389,14 @@
         }
     }
 
+    function updatePreviewSupportLink(supportLinkValue) {
+        if (supportLinkValue && supportLinkValue.trim()) {
+            $('#previewSupportLink').attr('href', supportLinkValue).show();
+        } else {
+            $('#previewSupportLink').attr('href', '#').hide();
+        }
+    }
+
     function toggleReasonField() {
         var selected = $('input[name="status"]:checked').val();
         if (selected === 'not selected') {
@@ -397,6 +466,11 @@
         // Update preview link when link input changes
         $('[name="link"]').on('input', function() {
             updatePreviewLink($(this).val());
+        });
+
+        // Update preview supporting link when supporting_links input changes
+        $('[name="supporting_links"]').on('input', function() {
+            updatePreviewSupportLink($(this).val());
         });
 
         $('#btnSave').on('click', function() {

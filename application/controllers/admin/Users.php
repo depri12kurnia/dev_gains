@@ -50,7 +50,7 @@ class Users extends CI_Controller
         foreach ($list as $user) {
             $no++;
             $row = array();
-            $row[] = $no++;
+            $row[] = $no;
             $row[] = $user->email;
             $row[] = $user->first_name;
             $row[] = $user->group_name;

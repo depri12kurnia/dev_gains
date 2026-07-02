@@ -14,7 +14,7 @@ class M_payment extends CI_Model
 
     private function _get_datatables_query()
     {
-        $this->db->select('payments.id, users.email, payments.user_id, payments.bank_name, payments.sender_name, payments.status');
+        $this->db->select('payments.id, users.email, users.first_name, users.last_name, payments.user_id, payments.bank_name, payments.sender_name, payments.status');
         $this->db->from($this->table);
         $this->db->join('users', 'users.id = payments.user_id');
         $this->db->order_by('payments.id', 'desc');

@@ -10,6 +10,20 @@
             </div>
 
             <div class="p-8">
+                <div style="padding-top:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid var(--gray-100); text-align:center;">
+                    <p class="text-sm text-gray-600">Registration Using Google:</p>
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+
+                    <a href="<?php echo $google_login_url; ?>">
+                        <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Google Sign In" style="width: 200px;">
+                    </a>
+                </div>
+                <div style="padding-top:0.5rem; padding-bottom:0.5rem; border-top:1px solid var(--gray-100); border-bottom:1px solid var(--gray-100); text-align:center;">
+                    <p class="text-sm text-gray-600">
+                        <span id="auth-switch-text">Or Registration Using Email: </span>
+                    </p>
+                </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
 
@@ -53,53 +67,30 @@
                     <label>Email :</label>
                     <div class="input-group">
                         <input type="email" class="form-control" placeholder="Email" name="email" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Password :</label>
                     <div class="input-group">
                         <input type="password" class="form-control" placeholder="Password" name="password" required id="password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <i class="fas fa-eye-slash" id="eye"></i>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Retype Password :</label>
                     <div class="input-group">
                         <input type="password" class="form-control" placeholder="Retype password" name="password_confirm" required id="password_confirm">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <i class="fas fa-eye-slash" id="eye2"></i>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Full Name :</label>
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Full Name" name="first_name" required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Phone Number :</label>
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Phone Number" name="phone" required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-phone"></span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

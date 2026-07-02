@@ -65,10 +65,129 @@
           <!-- Sidebar Menu -->
           <nav class="mt-2">
               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                  <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
                   <!-- Akses Administrator -->
-                  <?php if ($this->ion_auth->in_group('admin')) {  ?>
+
+                  <li class="nav-item">
+                      <a href="<?php echo base_url('admin/dashboard'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'dashboard' ? 'active' : ''; ?>">
+                          <i class="nav-icon fas fa-tachometer-alt"></i>
+                          <p>
+                              Dashboard
+                          </p>
+                      </a>
+                  </li>
+
+                  <?php if ($this->ion_auth->in_group('ahic')) {  ?>
+                      <li class="nav-header">Masters Assessment</li>
+                      <?php
+                        // 1. Definisikan segment URI di atas agar tidak berulang-ulang memanggil fungsi
+                        $seg1 = $this->uri->segment(1);
+                        $seg2 = $this->uri->segment(2);
+                        $seg3 = $this->uri->segment(3);
+
+                        // 2. Cek apakah menu induk "Administrator" harus terbuka / aktif
+                        $isAdminMenuOpen = ($seg1 == 'admin' && $seg2 == 'category' && in_array($seg3, ['ahic', 'e2ipbc', 'irpc']));
+                        ?>
+
+                      <li class="nav-item <?= $isAdminMenuOpen ? 'menu-open' : ''; ?>">
+                          <a href="#" class="nav-link <?= $isAdminMenuOpen ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-cogs"></i>
+                              <p>
+                                  Assessment
+                                  <i class="fas fa-angle-left right"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="<?php echo base_url('admin/category/ahic'); ?>" class="nav-link <?= ($seg1 == 'admin' && $seg2 == 'category' && $seg3 == 'ahic') ? 'active' : ''; ?>">
+                                      <i class="nav-icon fas fa-file-alt"></i>
+                                      <p>Master AHIC</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('e2ipbc')) {  ?>
+                      <li class="nav-header">Masters Assessment</li>
+                      <?php
+                        // 1. Definisikan segment URI di atas agar tidak berulang-ulang memanggil fungsi
+                        $seg1 = $this->uri->segment(1);
+                        $seg2 = $this->uri->segment(2);
+                        $seg3 = $this->uri->segment(3);
+
+                        // 2. Cek apakah menu induk "Administrator" harus terbuka / aktif
+                        $isAdminMenuOpen = ($seg1 == 'admin' && $seg2 == 'category' && in_array($seg3, ['ahic', 'e2ipbc', 'irpc']));
+                        ?>
+
+                      <li class="nav-item <?= $isAdminMenuOpen ? 'menu-open' : ''; ?>">
+                          <a href="#" class="nav-link <?= $isAdminMenuOpen ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-cogs"></i>
+                              <p>
+                                  Assessment
+                                  <i class="fas fa-angle-left right"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="<?php echo base_url('admin/category/e2ipbc'); ?>" class="nav-link <?= ($seg1 == 'admin' && $seg2 == 'category' && $seg3 == 'e2ipbc') ? 'active' : ''; ?>">
+                                      <i class="nav-icon fas fa-file-alt"></i>
+                                      <p>Master E2IPBC</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('irpc')) {  ?>
+                      <li class="nav-header">Masters Assessment</li>
+                      <?php
+                        // 1. Definisikan segment URI di atas agar tidak berulang-ulang memanggil fungsi
+                        $seg1 = $this->uri->segment(1);
+                        $seg2 = $this->uri->segment(2);
+                        $seg3 = $this->uri->segment(3);
+
+                        // 2. Cek apakah menu induk "Administrator" harus terbuka / aktif
+                        $isAdminMenuOpen = ($seg1 == 'admin' && $seg2 == 'category' && in_array($seg3, ['ahic', 'e2ipbc', 'irpc']));
+                        ?>
+
+                      <li class="nav-item <?= $isAdminMenuOpen ? 'menu-open' : ''; ?>">
+                          <a href="#" class="nav-link <?= $isAdminMenuOpen ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-cogs"></i>
+                              <p>
+                                  Assessment
+                                  <i class="fas fa-angle-left right"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="<?php echo base_url('admin/category/irpc'); ?>" class="nav-link <?= ($seg1 == 'admin' && $seg2 == 'category' && $seg3 == 'irpc') ? 'active' : ''; ?>">
+                                      <i class="nav-icon fas fa-file-alt"></i>
+                                      <p>Master IRPC</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  <?php } ?>
+
+                  <?php if ($this->ion_auth->in_group('screenings')) {  ?>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/screenings'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'screenings' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Screenings
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('appraisal')) {  ?>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/report/combined_scores'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'report' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Result
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('auditor')) {  ?>
                       <li class="nav-item">
                           <a href="<?php echo base_url('admin/dashboard'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'dashboard' ? 'active' : ''; ?>">
                               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -77,6 +196,36 @@
                               </p>
                           </a>
                       </li>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payment' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Payment
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('reviewer')) {  ?>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/dashboard'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'dashboard' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-tachometer-alt"></i>
+                              <p>
+                                  Dashboard
+                              </p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/submissions'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'submissions' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Submissions
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+
+                  <?php if ($this->ion_auth->in_group('admin')) {  ?>
+
                       <li class="nav-header">Master Data</li>
                       <li class="nav-item">
                           <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payment' ? 'active' : ''; ?>">
@@ -88,15 +237,41 @@
                       </li>
 
                       <li class="nav-item">
+                          <a href="<?php echo base_url('admin/screenings'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'screenings' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Screenings
+                              </p>
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/report/combined_scores'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'report' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Result
+                              </p>
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
                           <a href="<?php echo base_url('admin/submissions'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'submissions' ? 'active' : ''; ?>">
                               <i class="nav-icon fas fa-file-alt"></i>
                               <p>
-                                  Submissions
+                                  All Submissions
                               </p>
                           </a>
                       </li>
 
                       <li class="nav-header">Administrator</li>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/component'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'component' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-user"></i>
+                              <p>
+                                  Master Component
+                              </p>
+                          </a>
+                      </li>
                       <li class="nav-item">
                           <a href="<?php echo base_url('admin/users'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'users' ? 'active' : ''; ?>">
                               <i class="nav-icon fas fa-user"></i>
@@ -126,6 +301,46 @@
                               <i class="nav-icon fas fa-history"></i>
                               <p>
                                   Logs System
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('screenings')) {  ?>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('appraisal')) {  ?>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('auditor')) {  ?>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/dashboard'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'dashboard' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-tachometer-alt"></i>
+                              <p>
+                                  Dashboard
+                              </p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/payment'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'payment' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Payment
+                              </p>
+                          </a>
+                      </li>
+                  <?php } ?>
+                  <?php if ($this->ion_auth->in_group('reviewer')) {  ?>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/dashboard'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'dashboard' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-tachometer-alt"></i>
+                              <p>
+                                  Dashboard
+                              </p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="<?php echo base_url('admin/submissions'); ?>" class="nav-link <?= ($this->uri->segment(1) == 'admin') && $this->uri->segment(2) == 'submissions' ? 'active' : ''; ?>">
+                              <i class="nav-icon fas fa-file-alt"></i>
+                              <p>
+                                  Submissions
                               </p>
                           </a>
                       </li>

@@ -12,8 +12,8 @@ class Submissions extends CI_Controller
         $this->load->model('M_log_user');
         $this->load->model('M_users');
 
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('page_errors');
+        if (!$this->ion_auth->in_group(array('admin', 'auditor', 'reviewer'))) {
+            redirect('admin/page_errors');
         }
     }
 
@@ -43,16 +43,6 @@ class Submissions extends CI_Controller
             $row[] = $submission->category;
             $row[] = $submission->title;
 
-            if ($submission->status == 'submitted') {
-                $status_icon = '<i class="fas fa-paper-plane text-primary" title="Submitted"></i>';
-            } elseif ($submission->status == 'not selected') {
-                $status_icon = '<i class="fas fa-times-circle text-danger" title="Not Selected"></i>';
-            } elseif ($submission->status == 'finalist') {
-                $status_icon = '<i class="fas fa-check-circle text-success" title="Finalist"></i>';
-            } else {
-                $status_icon = $submission->status;
-            }
-            $row[] = $status_icon;
             $row[] = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Verify" onclick="viewSubmission(' . "'" . $submission->id . "'" . ')"><i class="fa fa-eye"></i></a>
                       ';
             $data[] = $row;
@@ -83,7 +73,7 @@ class Submissions extends CI_Controller
         $comment = $this->input->post('comment');
 
         $data = ['status' => $status];
-        if ($status === 'not selected') {
+        if ($status === 'not_selected') {
             $data['comment'] = $comment;
         }
 
@@ -105,7 +95,7 @@ class Submissions extends CI_Controller
         $status = $this->input->get('status');
 
         // Get filtered data
-        $this->db->select('submissions.id, users.email, submissions.institution, submissions.country, submissions.category, submissions.title, submissions.link, submissions.status, submissions.created_at');
+        $this->db->select('submissions.id, users.email, submissions.user_id, submissions.team_leader, submissions.leader_titles, submissions.institution, submissions.country, submissions.partType, submissions.crossCollab, submissions.team_members, submissions.category, submissions.title, submissions.focus_area, submissions.alignment_theme, submissions.link, submissions.supporting_links, submissions.status, submissions.consent, submissions.comment, submissions.created_at, submissions.updated_at');
         $this->db->from('submissions');
         $this->db->join('users', 'users.id = submissions.user_id');
 
@@ -135,26 +125,48 @@ class Submissions extends CI_Controller
         // Add header
         $sheet->setCellValue('A1', 'ID');
         $sheet->setCellValue('B1', 'Email');
-        $sheet->setCellValue('C1', 'Institution');
-        $sheet->setCellValue('D1', 'Country');
-        $sheet->setCellValue('E1', 'Category');
-        $sheet->setCellValue('F1', 'Title');
-        $sheet->setCellValue('G1', 'Link');
-        $sheet->setCellValue('H1', 'Status');
-        $sheet->setCellValue('I1', 'Created At');
+        $sheet->setCellValue('C1', 'Team Leader');
+        $sheet->setCellValue('D1', 'Leader Titles');
+        $sheet->setCellValue('E1', 'Institution');
+        $sheet->setCellValue('F1', 'Country');
+        $sheet->setCellValue('G1', 'Participation Type');
+        $sheet->setCellValue('H1', 'Cross Collaboration');
+        $sheet->setCellValue('I1', 'Team Members');
+        $sheet->setCellValue('J1', 'Category');
+        $sheet->setCellValue('K1', 'Title');
+        $sheet->setCellValue('L1', 'Focus Area');
+        $sheet->setCellValue('M1', 'Alignment Theme');
+        $sheet->setCellValue('N1', 'Link');
+        $sheet->setCellValue('O1', 'Supporting Links');
+        $sheet->setCellValue('P1', 'Status');
+        $sheet->setCellValue('Q1', 'Consent');
+        $sheet->setCellValue('R1', 'Comment');
+        $sheet->setCellValue('S1', 'Created At');
+        $sheet->setCellValue('T1', 'Updated At');
 
         // Add data
         $row = 2;
         foreach ($submissions as $submission) {
             $sheet->setCellValue('A' . $row, $submission->id);
             $sheet->setCellValue('B' . $row, $submission->email);
-            $sheet->setCellValue('C' . $row, $submission->institution);
-            $sheet->setCellValue('D' . $row, $submission->country);
-            $sheet->setCellValue('E' . $row, $submission->category);
-            $sheet->setCellValue('F' . $row, $submission->title);
-            $sheet->setCellValue('G' . $row, $submission->link);
-            $sheet->setCellValue('H' . $row, $submission->status);
-            $sheet->setCellValue('I' . $row, $submission->created_at);
+            $sheet->setCellValue('C' . $row, $submission->team_leader);
+            $sheet->setCellValue('D' . $row, $submission->leader_titles);
+            $sheet->setCellValue('E' . $row, $submission->institution);
+            $sheet->setCellValue('F' . $row, $submission->country);
+            $sheet->setCellValue('G' . $row, $submission->partType);
+            $sheet->setCellValue('H' . $row, $submission->crossCollab);
+            $sheet->setCellValue('I' . $row, $submission->team_members);
+            $sheet->setCellValue('J' . $row, $submission->category);
+            $sheet->setCellValue('K' . $row, $submission->title);
+            $sheet->setCellValue('L' . $row, $submission->focus_area);
+            $sheet->setCellValue('M' . $row, $submission->alignment_theme);
+            $sheet->setCellValue('N' . $row, $submission->link);
+            $sheet->setCellValue('O' . $row, $submission->supporting_links);
+            $sheet->setCellValue('P' . $row, $submission->status);
+            $sheet->setCellValue('Q' . $row, ($submission->consent ? 'Yes' : 'No'));
+            $sheet->setCellValue('R' . $row, $submission->comment);
+            $sheet->setCellValue('S' . $row, $submission->created_at);
+            $sheet->setCellValue('T' . $row, $submission->updated_at);
             $row++;
         }
 

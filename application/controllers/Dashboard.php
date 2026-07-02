@@ -56,8 +56,8 @@ class Dashboard extends CI_Controller
             'approved'      => 'Payment Success',
             'rejected'      => 'Payment Rejected',
             'submitted'     => 'Work Submitted',
-            'under review'  => 'Under Review',
-            'not selected'  => 'Not Selected',
+            'revision'      => 'Revision',
+            'not_selected'  => 'Not Selected',
             'finalist'      => 'Finalist'
         ];
 
@@ -72,6 +72,28 @@ class Dashboard extends CI_Controller
             'initials' => strtoupper(substr($user->first_name, 0, 2)),
             'status'   => $status_label[$status]
         ];
+
+        $submission = $this->db->get_where('submissions', ['user_id' => $user_id])->row();
+        $data['submission'] = $submission;
+        $data['submission_status'] = $submission ? $submission->status : 'registered';
+
+        $data['judges_comments'] = [];
+        if ($submission) {
+            $data['judges_comments'] = $this->db->select('
+                                        e.total_score, 
+                                        e.key_strengths, 
+                                        e.key_weaknesses, 
+                                        e.recommendations, 
+                                        e.recommendation_status,
+                                        u.first_name,
+                                        u.last_name
+                                    ')
+                ->from('evaluations e')
+                ->join('users u', 'u.id = e.assessor_id', 'inner')
+                ->where('e.submission_id', $submission->id)
+                ->get()
+                ->result_array();
+        }
 
         $data['groups']  = $this->M_users->get_groups();
         $data['website'] = $this->M_settings->get_all_settings();
@@ -152,6 +174,11 @@ class Dashboard extends CI_Controller
             $country = $this->input->post('other_country');
         }
 
+        $focus_area = $this->input->post('focus_area');
+        if ($focus_area === 'Other') {
+            $focus_area = $this->input->post('other_area');
+        }
+
         $data = [
             'user_id'       => $user_id,
             'team_leader'   => $this->input->post('team_leader'),
@@ -163,7 +190,7 @@ class Dashboard extends CI_Controller
             'team_members'  => $this->input->post('team_members'),
             'category'      => $this->input->post('category'),
             'title'         => $this->input->post('title'),
-            'focus_area'    => $this->input->post('focus_area'),
+            'focus_area'    => $focus_area,
             'alignment_theme' => $this->input->post('alignment_theme'),
             'link'          => $this->input->post('link'),
             'supporting_links' => $this->input->post('supporting_links'),

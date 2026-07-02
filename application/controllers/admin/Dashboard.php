@@ -42,7 +42,7 @@ class Dashboard extends CI_Controller
         $data['submission_total'] = $this->M_submission->count_all();
         $data['submission_submitted'] = $this->db->where('status', 'submitted')->count_all_results('submissions');
         $data['submission_finalist'] = $this->db->where('status', 'finalist')->count_all_results('submissions');
-        $data['submission_not_selected'] = $this->db->where('status', 'not selected')->count_all_results('submissions');
+        $data['submission_not_selected'] = $this->db->where('status', 'not_selected')->count_all_results('submissions');
 
         // Submission success rate (finalist vs total)
         if ($data['submission_total'] > 0) {
@@ -109,7 +109,7 @@ class Dashboard extends CI_Controller
                    COUNT(*) as total,
                    SUM(CASE WHEN status = 'finalist' THEN 1 ELSE 0 END) as finalist,
                    SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) as submitted,
-                   SUM(CASE WHEN status = 'not selected' THEN 1 ELSE 0 END) as not_selected
+                   SUM(CASE WHEN status = 'not_selected' THEN 1 ELSE 0 END) as not_selected
             FROM submissions
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')

@@ -12,8 +12,8 @@ class Payment extends CI_Controller
         $this->load->model('M_log_user');
         $this->load->model('M_users');
 
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('page_errors');
+        if (!$this->ion_auth->in_group(array('admin', 'auditor', 'reviewer'))) {
+            redirect('admin/page_errors');
         }
     }
 
@@ -36,8 +36,9 @@ class Payment extends CI_Controller
         foreach ($list as $payment) {
             $no++;
             $row = array();
-            $row[] = $no++;
+            $row[] = $no;
             $row[] = $payment->email;
+            $row[] = $payment->first_name . ' ' . $payment->last_name;
             $row[] = $payment->bank_name;
             $row[] = $payment->sender_name;
             if ($payment->status == 'pending') {
@@ -117,5 +118,74 @@ class Payment extends CI_Controller
             ]);
             exit();
         }
+    }
+
+    public function export_excel()
+    {
+
+        // Get filtered data
+        $this->db->select('payments.id, payments.user_id, users.email, users.first_name, users.last_name, payments.bank_name, payments.sender_name, payments.status, payments.proof_file,');
+        $this->db->from('payments');
+        $this->db->join('users', 'users.id = payments.user_id');
+
+        $this->db->order_by('payments.id', 'desc');
+        $query = $this->db->get();
+        $payments = $query->result();
+
+        // Load PhpSpreadsheet library
+        require_once APPPATH . '../vendor/autoload.php';
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()->setCreator("Gains Admin")
+            ->setLastModifiedBy("Gains Admin")
+            ->setTitle("payments Export")
+            ->setSubject("payments Export")
+            ->setDescription("Export of payments data");
+
+        // Add header
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Email');
+        $sheet->setCellValue('C1', 'Fist Name');
+        $sheet->setCellValue('D1', 'Last Name');
+        $sheet->setCellValue('E1', 'Bank Name');
+        $sheet->setCellValue('F1', 'Sender Name');
+        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('H1', 'Proof File');
+
+        // Add data
+        $row = 2;
+        foreach ($payments as $p) {
+            $sheet->setCellValue('A' . $row, $p->id);
+            $sheet->setCellValue('B' . $row, $p->email);
+            $sheet->setCellValue('C' . $row, $p->first_name);
+            $sheet->setCellValue('D' . $row, $p->last_name);
+            $sheet->setCellValue('E' . $row, $p->bank_name);
+            $sheet->setCellValue('F' . $row, $p->sender_name);
+            $sheet->setCellValue('G' . $row, $p->status);
+
+            $fileUrl = base_url('public/uploads/payment/' . $p->proof_file);
+
+            $sheet->setCellValue('H' . $row, $p->proof_file);
+
+            $sheet->getCell('H' . $row)->getHyperlink()->setUrl($fileUrl);
+
+            $sheet->getStyle('H' . $row)->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE);
+            $sheet->getStyle('H' . $row)->getFont()->setUnderline(true);
+            $row++;
+        }
+
+        // Rename worksheet
+        $sheet->setTitle('Payments');
+
+        // Set headers for download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="payments_' . date('Y-m-d_H-i-s') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 }

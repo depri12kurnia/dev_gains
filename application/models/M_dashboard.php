@@ -22,6 +22,6 @@ class M_dashboard extends CI_Model
         $this->db->where('u.id', $user_id);
 
         $query = $this->db->get();
-        return $query->row(); // Mengembalikan satu baris data sebagai object
+        return $query->row();
     }
 }

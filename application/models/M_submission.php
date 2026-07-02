@@ -8,13 +8,13 @@ class M_submission extends CI_Model
 
 
     var $table = 'submissions';
-    var $column_order = array('submissions.id', 'submissions.user_id', 'submissions.institution', 'submissions.country', 'submissions.category', 'submissions.title', 'submissions.link', 'submissions.status');
-    var $column_search = array('submissions.user_id', 'submissions.institution', 'submissions.country', 'submissions.category', 'submissions.title', 'submissions.link', 'submissions.status');
+    var $column_order = array('submissions.id', 'submissions.user_id', 'submissions.team_leader',  'submissions.leader_titles', 'submissions.institution', 'submissions.country', 'submissions.partType', 'submissions.crossCollab', 'submissions.team_members', 'submissions.category', 'submissions.title', 'submissions.focus_area', 'submissions.alignment_theme', 'submissions.link', 'submissions.supporting_links', 'submissions.status');
+    var $column_search = array('submissions.user_id', 'submissions.team_leader', 'submissions.leader_titles', 'submissions.institution', 'submissions.country', 'submissions.partType', 'submissions.crossCollab', 'submissions.team_members', 'submissions.category', 'submissions.title', 'submissions.focus_area', 'submissions.alignment_theme', 'submissions.link', 'submissions.supporting_links', 'submissions.status');
     var $order = array('submissions.id' => 'desc');
 
     private function _get_datatables_query()
     {
-        $this->db->select('submissions.id, users.email, submissions.user_id, submissions.institution, submissions.country, submissions.category, submissions.title, submissions.link, submissions.status');
+        $this->db->select('submissions.id, users.email, submissions.user_id, submissions.team_leader, submissions.leader_titles, submissions.institution, submissions.country, submissions.partType, submissions.crossCollab, submissions.team_members, submissions.category, submissions.title, submissions.focus_area, submissions.alignment_theme, submissions.link, submissions.supporting_links, submissions.status');
         $this->db->from($this->table);
         $this->db->join('users', 'users.id = submissions.user_id');
         $this->db->order_by('submissions.id', 'desc');
